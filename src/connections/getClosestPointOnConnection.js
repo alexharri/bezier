@@ -40,7 +40,7 @@ module.exports = function getClosestPointOnConnection(c, position) {
     }
   }
 
-  if (closestApprox.distance > 400) { // 20px
+  if (closestApprox.distance > 100) { // 10px
     return null;
   }
 

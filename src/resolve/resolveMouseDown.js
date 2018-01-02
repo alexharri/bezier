@@ -3,11 +3,12 @@ import { runListeners } from "../listeners/listeners";
 const toPosition = require("../../utils/toPosition");
 const resolveObjectAtPosition = require("./resolveObjectAtPosition");
 
-const __CONNECTION = require("../listeners/connections/onConnectionMouseDown");
-const __POINT = require("../listeners/points/onPointMouseDown");
+const __CONNECTION  = require("../listeners/connections/onConnectionMouseDown");
+const __HANDLE      = require("../listeners/connections/onHandleMouseDown");
+const __POINT       = require("../listeners/points/onPointMouseDown");
 
 const listeners = {
-  __HANDLE: null,
+  __HANDLE,
   __POINT,
   __CONNECTION,
 }

@@ -34,11 +34,8 @@ exports.getPointAtPosition = function getPointAtPosition(position) {
   const points = getAllPoints();
   for (let i = 0; i < points.length; i += 1) {
     const distance = calcDistanceBetweenPositions(position, points[i]);
-    if (distance < 400) { // 20px
-      return {
-        type: "__POINT",
-        value: points[i],
-      };
+    if (distance < 100) { // 10px
+      return points[i];
     }
   }
   return null;

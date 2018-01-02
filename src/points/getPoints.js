@@ -13,6 +13,10 @@ const points = {
 exports._points = points;
 
 exports.getPointById = function getPointById(id) {
+  if (!id || typeof id !== "string") {
+    throw new Error(`Invalid id. Expected string but got '${id}'`);
+  }
+
   return points[id] || null;
 }
 

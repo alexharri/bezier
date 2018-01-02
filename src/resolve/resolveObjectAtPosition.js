@@ -6,12 +6,12 @@ module.exports = function resolveObjectAtPosition(position) {
   /**
    * Returns the closest handle if it's close enough.
    */
-  const handle = getHandleAtPosition(position);
-  if (handle) {
+  const handleAndPoint = getHandleAtPosition(position, true);
+  if (handleAndPoint) {
     return {
       type: "__HANDLE",
-      value: handle,
-    }
+      value: handleAndPoint,
+    };
   }
 
   /**

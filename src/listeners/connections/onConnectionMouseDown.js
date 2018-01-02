@@ -23,6 +23,10 @@ module.exports = function onConnectionMouseDown({ connection, closestPoint }) {
 
   const newPointId = addPoint(p3);
 
+  // p2 and p4 will be mirror handles
+  p2.sibling = p4;
+  p4.sibling = p2;
+
   /**
    * Notice how we give the ids of the points for the first
    * and last parameter, not the actual points themselves.

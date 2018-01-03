@@ -48,7 +48,7 @@ module.exports = function resolveMouseDown(e) {
   const objectId = getObjectId[type](value);
 
   /**
-   * Sets the appropriate listeners for the object of this type.
+   * Runs the appropriate listeners for the object of this type.
    *
    * Listeners must be set before selection is mutated because they
    * depend on the selection state.

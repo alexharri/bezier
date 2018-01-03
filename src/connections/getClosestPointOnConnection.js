@@ -3,7 +3,7 @@ const calcDistanceBetweenPositions = require("../../utils/calcDistanceBetweenPos
 const getIntermediateNumber = require("../../utils/getIntermediateNumber");
 const getPointsBetween = require("./getPointsBetween");
 
-const numApproxPoints = 30;
+const numApproxPoints = 40;
 
 /**
  * Finds the closest point from a position to the bezier curve that
@@ -40,7 +40,7 @@ module.exports = function getClosestPointOnConnection(c, position) {
     }
   }
 
-  if (closestApprox.distance > 100) { // 10px
+  if (closestApprox.distance > 225) { // 15px
     return null;
   }
 

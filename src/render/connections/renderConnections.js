@@ -1,6 +1,7 @@
 const getContext = require("../../canvas/getContext");
 const getConnectionPoints = require("../../connections/getConnectionPoints");
 const { getAllConnections } = require("../../connections/getConnections");
+const { renderPointGuide, clearPointGuide } = require("./connectionGuides");
 
 module.exports = function renderConnections() {
   const connections = getAllConnections();
@@ -35,4 +36,7 @@ module.exports = function renderConnections() {
     ctx.lineTo(p3.x, p3.y);
     ctx.stroke();
   }
+
+  renderPointGuide();
+  clearPointGuide();
 }

@@ -32,13 +32,18 @@ function getAllPoints() {
 
 exports.getPointAtPosition = function getPointAtPosition(position) {
   const points = getAllPoints();
+  let closestPoint;
+  let pointDistance;
+
   for (let i = 0; i < points.length; i += 1) {
     const distance = calcDistanceBetweenPositions(position, points[i]);
-    if (distance < 100) { // 10px
-      return points[i];
+    if (!closestPoint || distance < pointDistance) {
+      closestPoint = points[i];
+      pointDistance = distance;
     }
   }
-  return null;
+
+  return pointDistance < 100 ? closestPoint : null;
 }
 
 exports.getAllPoints = getAllPoints;

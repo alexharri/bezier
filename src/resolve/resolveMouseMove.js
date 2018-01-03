@@ -36,7 +36,7 @@ module.exports = function resolveMouseMove(e) {
    * any way.
    */
   if (listeners[type]) {
-    listeners[type](value, position);
+    listeners[type](value);
   } else {
     setCursor("DEFAULT");
   }

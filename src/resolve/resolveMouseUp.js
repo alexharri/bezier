@@ -16,7 +16,7 @@ module.exports = function resolveMouseUp(e) {
 
   const { value, type } = obj;
   if (listeners[type]) {
-    listeners[type](value, position);
+    listeners[type](value);
   }
   render(position);
 }

@@ -54,7 +54,7 @@ module.exports = function resolveMouseDown(e) {
    * depend on the selection state.
    */
   if (listeners[type]) {
-    listeners[type](value, position);
+    listeners[type](value);
   }
 
   /**

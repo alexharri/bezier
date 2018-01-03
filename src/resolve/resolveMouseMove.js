@@ -2,7 +2,7 @@ const { runListeners } = require("../listeners/listeners");
 const toPosition = require("../../utils/toPosition");
 const resolveObjectAtPosition = require("./resolveObjectAtPosition");
 const render = require("../render/render");
-const setCursor = require("../../utils/setCursor");
+const { setCursor } = require("../../utils/cursor");
 
 const __CONNECTION  = require("../listeners/connections/onConnectionMouseMove");
 
@@ -25,7 +25,7 @@ module.exports = function resolveMouseMove(e) {
   if (!obj) {
     // Change mouse icon to default
     setCursor("DEFAULT");
-    render();
+    render(position);
     return;
   }
 
@@ -36,10 +36,10 @@ module.exports = function resolveMouseMove(e) {
    * any way.
    */
   if (listeners[type]) {
-    listeners[type](value);
+    listeners[type](value, position);
   } else {
     setCursor("DEFAULT");
   }
 
-  render();
+  render(position);
 }

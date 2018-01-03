@@ -43,7 +43,7 @@ exports.getPointAtPosition = function getPointAtPosition(position) {
     }
   }
 
-  return pointDistance < 100 ? closestPoint : null;
+  return pointDistance < 225 ? closestPoint : null; // 15px
 }
 
 exports.getAllPoints = getAllPoints;

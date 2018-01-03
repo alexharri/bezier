@@ -6,7 +6,7 @@ const deleteConnection = require("../../connections/deleteConnection");
 const shortid = require("shortid");
 const render = require("../../render/render");
 
-module.exports = function onConnectionMouseDown({ connection, closestPoint }) {
+module.exports = function onConnectionMouseDown({ connection, closestPoint }, position) {
   const [ a, b ] = connection.points; // These are the point ids, not the actual points.
   const { t } = closestPoint; // t is where we split the path
 
@@ -43,5 +43,5 @@ module.exports = function onConnectionMouseDown({ connection, closestPoint }) {
   addConnection(a, p1, p2, newPointId);
   addConnection(newPointId, p4, p5, b);
 
-  render();
+  render(position);
 }

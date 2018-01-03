@@ -1,8 +1,16 @@
 const { addListener, removeListener } = require("../../listeners/listeners");
 const setPointPosition = require("../../points/setPointPosition");
+const { setCursor, releaseOverride } = require("../../../utils/cursor");
 
 module.exports = function onHandleMouseDown({ handle, point: origin }) {
+  let mouseMoved = false;
+  let overrideId;
+  
   const listenerId = addListener("mousemove", (position) => {
+    if (!mouseMoved) {
+      overrideId = setCursor("MOVE", { override: true });
+    }
+    mouseMoved = true;
 
     handle.x = position.x;
     handle.y = position.y;
@@ -60,6 +68,10 @@ module.exports = function onHandleMouseDown({ handle, point: origin }) {
 
 
   addListener("mouseup", () => {
+    // Releasing the cursor override.
+    if (typeof overrideId === "string") {
+      releaseOverride(overrideId);
+    }
     removeListener("mousemove", listenerId);
   }, true);
 }

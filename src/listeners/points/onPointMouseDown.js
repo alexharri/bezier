@@ -3,6 +3,7 @@ const setPointPosition = require("../../points/setPointPosition");
 const { getPointById } = require("../../points/getPoints");
 const { isKeyDown } = require("../../../utils/keyboard");
 const { keys } = require("../../constants");
+const { setCursor, releaseOverride } = require("../../../utils/cursor");
 const {
   getSelectedOfType,
   removeFromSelection,
@@ -14,8 +15,13 @@ const {
 module.exports = function onPointMouseDown({ id }) {
   const wasInitiallySelected = isSelected("__POINT", id);
   let mouseMoved = false;
+  let overrideId;
 
   const listenerId = addListener("mousemove", (newPosition) => {
+    if (!mouseMoved) {
+      overrideId = setCursor("MOVE", { override: true });
+    }
+
     mouseMoved = true;
     const point = getPointById(id);
     const positionChange = {
@@ -36,6 +42,12 @@ module.exports = function onPointMouseDown({ id }) {
 
   addListener("mouseup", () => {
     removeListener("mousemove", listenerId);
+
+    // Releasing the cursor override.
+    if (typeof overrideId === "string") {
+      releaseOverride(overrideId);
+    }
+
     // If point was selected and the mouse was not moved
     if (wasInitiallySelected && !mouseMoved) {
       if (isKeyDown(keys.SHIFT)) {

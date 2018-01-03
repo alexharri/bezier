@@ -12,4 +12,4 @@ canvas.onmousedown = resolveMouseDown;
 canvas.onmouseup = resolveMouseUp;
 canvas.onmousemove = resolveMouseMove;
 
-render(); // Initial render
+render(null, { noPosition: true }); // Initial render

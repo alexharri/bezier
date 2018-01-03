@@ -39,7 +39,7 @@ module.exports = function resolveMouseDown(e) {
      *  - Select    => Square select
      */
     clearSelection();
-    render();
+    render(position);
     return;
   }
 
@@ -54,7 +54,7 @@ module.exports = function resolveMouseDown(e) {
    * depend on the selection state.
    */
   if (listeners[type]) {
-    listeners[type](value);
+    listeners[type](value, position);
   }
 
   /**
@@ -76,5 +76,5 @@ module.exports = function resolveMouseDown(e) {
     addToSelection(type, objectId);
   }
 
-  render();
+  render(position);
 }

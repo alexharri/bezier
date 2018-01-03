@@ -1,7 +1,7 @@
-import { runListeners } from "../listeners/listeners";
-
+const { runListeners } = require("../listeners/listeners");
 const toPosition = require("../../utils/toPosition");
 const resolveObjectAtPosition = require("./resolveObjectAtPosition");
+const render = require("../render/render");
 
 const listeners = {};
 
@@ -14,5 +14,8 @@ module.exports = function resolveMouseUp(e) {
   }
 
   const { value, type } = obj;
-  return listeners[type] && listeners[type](value);
+  if (listeners[type]) {
+    listeners[type](value);
+  }
+  render();
 }

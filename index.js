@@ -3,12 +3,13 @@ const resolveMouseDown = require("./src/resolve/resolveMouseDown");
 const resolveMouseMove = require("./src/resolve/resolveMouseMove");
 const resolveMouseUp = require("./src/resolve/resolveMouseUp");
 const render = require("./src/render/render");
+const { onKeyDown, onKeyUp } = require("./utils/keyboard");
+
+window.onkeydown  = onKeyDown;
+window.onkeyup    = onKeyUp;
 
 canvas.onmousedown = resolveMouseDown;
 canvas.onmouseup = resolveMouseUp;
-canvas.onmousemove = (e) => {
-  resolveMouseMove(toPosition(e)); // State changes
-  render(toPosition(e)); // Draws said changes
-}
+canvas.onmousemove = resolveMouseMove;
 
 render(); // Initial render

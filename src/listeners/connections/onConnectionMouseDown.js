@@ -3,6 +3,7 @@ const addPoint = require("../../points/addPoint");
 const addConnection = require("../../connections/addConnection");
 const getConnectionPoints = require("../../connections/getConnectionPoints");
 const deleteConnection = require("../../connections/deleteConnection");
+const shortid = require("shortid");
 const render = require("../../render/render");
 
 module.exports = function onConnectionMouseDown({ connection, closestPoint }) {
@@ -10,8 +11,8 @@ module.exports = function onConnectionMouseDown({ connection, closestPoint }) {
   const { t } = closestPoint; // t is where we split the path
 
   /**
-   * p0 is a
-   * p6 is b
+   * a is the left hand point
+   * b is the right hand point
    * p3 is the new point.
    *
    * The other points (p1, p2, p4, p5) are the handles.
@@ -20,12 +21,18 @@ module.exports = function onConnectionMouseDown({ connection, closestPoint }) {
 
   // We remove the old connection
   deleteConnection(connection.id);
-
-  const newPointId = addPoint(p3);
-
-  // p2 and p4 will be mirror handles
+  
+  // Giving the handles ids.
+  p1.id = shortid();
+  p2.id = shortid();
+  p4.id = shortid();
+  p5.id = shortid();
+  
+  // p2 and p4 will be siblings
   p2.sibling = p4;
   p4.sibling = p2;
+
+  const newPointId = addPoint(p3);
 
   /**
    * Notice how we give the ids of the points for the first

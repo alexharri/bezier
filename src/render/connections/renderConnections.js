@@ -14,7 +14,8 @@ module.exports = function renderConnections() {
       (p2.x), (p2.y),
       (p3.x), (p3.y),
     );
-    ctx.strokeStyle = "purple";
+    ctx.strokeStyle = "#444";
+    ctx.lineWidth = 1;
     ctx.stroke();
     
     

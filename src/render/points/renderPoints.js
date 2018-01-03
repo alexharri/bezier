@@ -1,11 +1,18 @@
+const { getSelectedOfType } = require("../../selection");
 const { getAllPoints } = require("../../points/getPoints");
 const { renderCircle } = require("../primitives");
 
-const renderPoint = point => renderCircle(point, 8, "blue");
+const pointRadius = 5;
+
 
 module.exports = function renderPoints() {
   const points = getAllPoints();
+  const selectedPoints = getSelectedOfType("__POINT");
   for (let i = 0; i < points.length; i += 1) {
-    renderPoint(points[i]);
+    if (selectedPoints.indexOf(points[i].id) > -1) {
+      renderCircle(points[i], pointRadius, "red");
+    } else {
+      renderCircle(points[i], pointRadius, "blue", { color: "green", width: 5 });
+    }
   }
 }

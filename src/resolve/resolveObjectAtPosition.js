@@ -29,11 +29,11 @@ module.exports = function resolveObjectAtPosition(position) {
    * Returns the closest point on the connection if a connection
    * is returned.
    */
-  const connection = getConnectionAtPosition(position);
-  if (connection) {
+  const connectionAndPoint = getConnectionAtPosition(position);
+  if (connectionAndPoint) {
     return {
       type: "__CONNECTION",
-      value: connection,
+      value: connectionAndPoint,
     }
   }
 

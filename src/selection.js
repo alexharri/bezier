@@ -1,45 +1,58 @@
-let currentSelection = {};
+const store = require("./store");
+
+const _validatedTypes = []; // To avoid unnecessary getState calls
 
 function validateType(type) {
+  if (_validatedTypes.indexOf(type) > -1) {
+    return;
+  }
+
   if (!type || typeof type !== "string") {
     throw new Error(`Invalid type. Expected string but got '${type}'.`);
   }
 
-  if (!Array.isArray(currentSelection[type])) {
-    currentSelection[type] = [];
-  }
+  store.dispatch({
+    type: "ADD_SELECTION_TYPE",
+    payload: type,
+  })
+
+  _validatedTypes.push(type);
 }
 
-exports.getSelectedOfType = function getSelectedOfType(type) {
+function getSelectedOfType(type) {
   validateType(type);
-  return [...currentSelection[type]];
+  return store.getState().selection[type];
 }
+exports.getSelectedOfType = getSelectedOfType;
 
 exports.addToSelection = function addToSelection(type, id) {
-  validateType(type);
-  if (currentSelection[type].indexOf(id) < 0) {
-    currentSelection[type].push(id);
+  const selectedOfType = getSelectedOfType(type);
+  if (selectedOfType.indexOf(id) < 0) {
+    store.dispatch({
+      type: "ADD_TO_SELECTION",
+      payload: { type, id },
+    });
   }
 }
 
 exports.removeFromSelection = function removeFromSelection(type, id) {
-  validateType(type);
-  const itemIndex = currentSelection[type].indexOf(id);
+  const itemIndex = getSelectedOfType(type).indexOf(id);
   if (itemIndex > -1) {
-    currentSelection[type].splice(itemIndex, 1);
+    store.dispatch({
+      type: "REMOVE_FROM_SELECTION",
+      payload: { type, itemIndex },
+    });
   }
 }
 
 exports.isSelected = function isSelected(type, id) {
-  validateType(type);
-  return currentSelection[type].indexOf(id) > -1;
+  return getSelectedOfType(type).indexOf(id) > -1;
 }
 
 exports.clearSelection = function clearSelection() {
-  const keys = Object.keys(currentSelection);
-  for (let i = 0; i < keys.length; i += 1) {
-    currentSelection[keys[i]].length = 0; // Emptying out the arrays
-  }
+  store.dispatch({
+    type: "CLEAR_SELECTION",
+  });
 }
 
 /**
@@ -47,6 +60,8 @@ exports.clearSelection = function clearSelection() {
  * with the current ids selected for said type.
  */
 exports.copySelection = function copySelection() {
+  const currentSelection = store.getState().selection;
+  
   const copy = {};
   const keys = Object.keys(currentSelection);
   for (let i = 0; i < keys.length; i += 1) {
@@ -59,5 +74,8 @@ exports.copySelection = function copySelection() {
  * ONLY TO BE USED BY THE HISTORY MODULE
  */
 exports._pasteSelection = function pasteSelection(selection) {
-  currentSelection = selection;
+  store.dispatch({
+    type: "RESTORE_SELECTION",
+    payload: selection,
+  });
 }

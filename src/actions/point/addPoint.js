@@ -1,3 +1,5 @@
+const isValidPosition = require("../../../utils/isValidPosition");
+
 module.exports = {
   redo: (point) => {
     if (!isValidPosition(point)) {
@@ -13,8 +15,14 @@ module.exports = {
       payload: point,
     };
   },
-  undo: ({ id }) => ({
-    type: "REMOVE_POINT",
-    id,
-  })
+  undo: ({ id }) => {
+    if (!id || typeof id !== "string") {
+      throw new Error(`Invalid point id. Expected string but got '${id}'.`);
+    }
+
+    return {
+      type: "DELETE_POINT",
+      payload: id,
+    };
+  },
 };

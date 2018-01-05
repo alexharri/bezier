@@ -2,8 +2,12 @@
  * An action is composed of three properties.
  *
  *    type - The name of the action, used to resolve the action creator
- *    data - Passed to the action creator- should be reversible
+ *    data - Passed to the action creator
  *    selection - The selection to restore when the action is executed
+ *
+ * An action may return af array of actions to execute.
+ *
+ * A top level action must have a selection, but sub-actions should not.
  *
  * Every action creator should be able to execute and reverse itself given
  * those three properties.
@@ -36,6 +40,26 @@ function resolveActionCreator(type, undo) {
   throw new Error(`Invalid action creator of type: '${type}'.`);
 }
 
+function resolveNestedAction(actions) {
+  for (let i = 0; i < actions.length; i += 1) {
+    const { type, data, selection } = actions[i];
+  
+    /**
+     * Always passing false for undo may seem counterintuitive at first,
+     * but we only want to flip the top level action, not sub-actions.
+     */
+    const actionCreator = resolveActionCreator(type, false);
+    const result = actionCreator(data);
+
+    if (Array.isArray(result)) {
+      resolveNestedAction(result); // oh boy
+    } else {
+      console.log(result);
+      store.dispatch(result);
+    }
+  }
+}
+
 /**
  * Predominantly used by the undo/redo mechanism.
  *
@@ -48,14 +72,15 @@ function resolveActionCreator(type, undo) {
  *                      modified whatsoever.
  *
  * ignoreSelection should exclusively be used by the addActionToHistory
- * function.
+ * module.
  */
-module.exports = function resolveAction({ type, data, selection }, opts = {}) {
+module.exports = function resolveAction(action, opts = {}) {
   if (!opts || typeof opts !== "object") {
     throw new Error(`Invalid options. Expected object but got '${opts}'.`);
   }
 
-  const actionCreator = resolveActionCreator(type, opts.undo || false);
+  const { type, data, selection } = action;
+  const undo = opts.undo || false;
 
   if (!opts.ignoreSelection) {
     store.dispatch({
@@ -63,5 +88,14 @@ module.exports = function resolveAction({ type, data, selection }, opts = {}) {
       payload: selection,
     });
   }
-  store.dispatch(actionCreator(data));
+
+  const actionCreator = resolveActionCreator(type, undo);
+  const result = actionCreator(data);
+  console.log(result);
+
+  if (Array.isArray(result)) {
+    resolveNestedAction(result, undo);
+  } else {
+    store.dispatch(result);
+  }
 }

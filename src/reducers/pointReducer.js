@@ -37,6 +37,15 @@ module.exports = function reducer(state = defaultState, action) {
         [id]: { x, y },
       }
     }
+    case "DELETE_POINT": {
+      console.log(action.payload);
+      return Object.keys(state).reduce((newState, key) => {
+        if (key !== action.payload) {
+          newState[key] = state[key];
+        }
+        return newState;
+      }, {});
+    }
     default: {
       return state;
     }

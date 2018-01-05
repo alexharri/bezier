@@ -1,26 +1,17 @@
-const { toConnectionId } = require("./connectionId");
 const getClosestPointOnConnection = require("./getClosestPointOnConnection");
+const { toConnectionId } = require("./connectionId");
+const store = require("../store");
 
 const a = "a";
 const b = "b";
 
-const connections = {
-  [toConnectionId(a, b)]: {
-    id: toConnectionId(a, b),
-    points: [a, b],
-    handles: [
-      { x: 240, y: 20 },
-      { x: 360, y: 500 },
-    ],
-  },
-};
-exports._connections = connections;
-
 exports.getConnectionById = function getConnectionById(a, b) {
-  return connections[toConnectionId(a, b)] || null;
+  return store.getState().connections[toConnectionId(a, b)] || null;
 }
 
-exports.getAllConnections = function getAllConnections() {
+function getAllConnections() {
+  const connections = store.getState().connections;
+  
   const cArr = [];
   const keys = Object.keys(connections);
   for (let i = 0; i < keys.length; i += 1) {
@@ -28,15 +19,17 @@ exports.getAllConnections = function getAllConnections() {
   }
   return cArr;
 }
+exports.getAllConnections = getAllConnections;
 
 exports.getConnectionAtPosition = function getConnectionAtPosition(position) {
-  const keys = Object.keys(connections);
-  for (let i = 0; i < keys.length; i += 1) {
-    const closestPoint = getClosestPointOnConnection(connections[keys[i]], position)
+  const connections = getAllConnections();
+
+  for (let i = 0; i < connections.length; i += 1) {
+    const closestPoint = getClosestPointOnConnection(connections[i], position);
     if (closestPoint) {
       return {
         closestPoint,
-        connection: connections[keys[i]],
+        connection: connections[i],
       };
     }
   }

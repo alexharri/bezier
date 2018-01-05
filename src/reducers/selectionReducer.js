@@ -60,7 +60,6 @@ module.exports = function reducer(state = defaultState, action) {
       const keys = Object.keys(state);
       for (let i = 0; i < keys.length; i += 1) {
         if (!Array.isArray(newState[keys[i]])) {
-          console.log(newState[keys[i]], keys[i]);
           newState[keys[i]] = [];
         }
       }

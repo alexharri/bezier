@@ -30,6 +30,13 @@ module.exports = function reducer(state = defaultState, action) {
 
       return newState;
     }
+    case "ADD_POINT": {
+      const { x, y, id } = action.payload;
+      return {
+        ...state,
+        [id]: { x, y },
+      }
+    }
     default: {
       return state;
     }

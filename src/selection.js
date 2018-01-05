@@ -1,4 +1,4 @@
-const currentSelection = {};
+let currentSelection = {};
 
 function validateType(type) {
   if (!type || typeof type !== "string") {
@@ -40,4 +40,24 @@ exports.clearSelection = function clearSelection() {
   for (let i = 0; i < keys.length; i += 1) {
     currentSelection[keys[i]].length = 0; // Emptying out the arrays
   }
+}
+
+/**
+ * Returns a new object with a new array for each type
+ * with the current ids selected for said type.
+ */
+exports.copySelection = function copySelection() {
+  const copy = {};
+  const keys = Object.keys(currentSelection);
+  for (let i = 0; i < keys.length; i += 1) {
+    copy[keys[i]] = [...currentSelection[keys[i]]];
+  }
+  return copy;
+}
+
+/**
+ * ONLY TO BE USED BY THE HISTORY MODULE
+ */
+exports._pasteSelection = function pasteSelection(selection) {
+  currentSelection = selection;
 }

@@ -8,8 +8,8 @@ const { onKeyDown, onKeyUp } = require("./utils/keyboard");
 window.onkeydown  = onKeyDown;
 window.onkeyup    = onKeyUp;
 
-canvas.onmousedown = resolveMouseDown;
-canvas.onmouseup = resolveMouseUp;
-canvas.onmousemove = resolveMouseMove;
+window.onmousedown = resolveMouseDown;
+window.onmousemove = resolveMouseMove;
+window.onmouseup = resolveMouseUp;
 
 render(null, { noPosition: true }); // Initial render

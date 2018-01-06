@@ -1,22 +1,22 @@
-const x = "x";
-const y = "y";
+const { types } = require("../constants");
 
 const defaultState = {
-  [x]: { x: 240, y: 20,   id: x },
-  [y]: { x: 360, y: 500,  id: y },
+  x: { x: 240, y: 20,   id: "x" },
+  y: { x: 360, y: 500,  id: "y" },
 };
 
 module.exports = function reducer(state = defaultState, action) {
   switch (action.type) {
-    case "SET_HANDLE_POSITION": {
-      const { ids, positionChange } = action.payload;
+    case "MOVE": {
+      const { selection, positionChange } = action.payload;
+      const toMove = selection[types.HANDLE];
 
       const newState = {
         ...state,
       };
 
-      for (let i = 0; i < ids.length; i += 1) {
-        const id = ids[i];
+      for (let i = 0; i < toMove.length; i += 1) {
+        const id = toMove[i];
         const { x, y } = state[id];
         newState[id] = {
           ...state[id],

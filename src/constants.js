@@ -6,6 +6,23 @@ module.exports = {
     WHITE: "#fff",
   },
 
+  types: {
+    POINT: "__POINT",
+    CONN: "__CONNECTION",
+    HANDLE: "__HANDLE",
+  },
+
+  tools: {
+    /**
+     * lowercase letters will be included with the string keys
+     */
+    p: "PEN",
+    PEN: "PEN",
+
+    v: "MOVE",
+    MOVE: "MOVE",
+  },
+
   keys: {
     SHIFT: "Shift",
     CONTROL: "Control",

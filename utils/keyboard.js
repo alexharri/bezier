@@ -1,3 +1,4 @@
+const tools = require("../src/tools/tools");
 const { keys } = require("../src/constants");
 const undo = require("../src/actions/history/undo");
 const redo = require("../src/actions/history/redo");
@@ -36,6 +37,8 @@ exports.onKeyDown = function onKeyDown({ key, repeat }) {
     undo();
     return;
   }
+
+  tools.setTool(key); // Only changes to tool if key is a valid tool.
 
   activeKeys[key] = true;
 }

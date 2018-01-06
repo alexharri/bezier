@@ -2,11 +2,8 @@ const getClosestPointOnConnection = require("./getClosestPointOnConnection");
 const { toConnectionId } = require("./connectionId");
 const store = require("../store");
 
-const a = "a";
-const b = "b";
-
-exports.getConnectionById = function getConnectionById(a, b) {
-  return store.getState().connections[toConnectionId(a, b)] || null;
+exports.getConnectionById = function getConnectionById(id) {
+  return store.getState().connections[id] || null;
 }
 
 function getAllConnections() {

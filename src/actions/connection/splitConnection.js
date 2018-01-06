@@ -1,11 +1,3 @@
-const splitBezier = require("../../bezier/splitBezier");
-const addPoint = require("../../actions/point/addPoint");
-const addConnection = require("../../connections/addConnection");
-const getConnectionPoints = require("../../connections/getConnectionPoints");
-const deleteConnection = require("../../connections/deleteConnection");
-const shortid = require("shortid");
-const render = require("../../render/render");
-
 exports.redo = ({ connection, newPoints }) => {
   const actions = [];
   

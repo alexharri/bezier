@@ -2,6 +2,11 @@ const store = require("../store");
 const { getAllConnections } = require("../connections/getConnections");
 const calcDistanceBetweenPositions = require("../../utils/calcDistanceBetweenPositions");
 
+/**
+ * Returns a point with a specific id
+ *
+ * Returns null if no point has said id.
+ */
 exports.getPointById = function getPointById(id) {
   if (!id || typeof id !== "string") {
     throw new Error(`Invalid id. Expected string but got '${id}'`);
@@ -12,6 +17,9 @@ exports.getPointById = function getPointById(id) {
   return points[id] || null;
 }
 
+/**
+ * Returns an array of all current points
+ */
 function getAllPoints() {
   const { points } = store.getState();
 
@@ -24,6 +32,11 @@ function getAllPoints() {
   return pArr;
 }
 
+/**
+ * Returns the point closest to the given position.
+ *
+ * Returns null if no point is closer than 15px
+ */
 exports.getPointAtPosition = function getPointAtPosition(position) {
   const points = getAllPoints();
   let closestPoint;
@@ -40,6 +53,10 @@ exports.getPointAtPosition = function getPointAtPosition(position) {
   return pointDistance < 225 ? closestPoint : null; // 15px
 }
 
+/**
+ * Returns an array with the ids of every handle that is
+ * connected to that point.
+ */
 exports.getPointHandleIds = function getPointHandleIds(id) {
   const connections = getAllConnections();
   const handles = [];

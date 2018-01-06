@@ -7,7 +7,7 @@ const { keys } = require("../constants");
 const render = require("../render/render");
 
 const __CONNECTION  = require("../listeners/connections/onConnectionMouseDown");
-const __HANDLE      = require("../listeners/connections/onHandleMouseDown");
+const __HANDLE      = require("../listeners/handles/onHandleMouseDown");
 const __POINT       = require("../listeners/points/onPointMouseDown");
 
 const listeners = {
@@ -17,7 +17,7 @@ const listeners = {
 };
 
 const getObjectId = {
-  __HANDLE: ({ handle }) => handle.id,
+  __HANDLE: ({ id }) => id,
   __POINT: ({ id }) => id,
   __CONNECTION: ({ connection }) => connection.id,
 }

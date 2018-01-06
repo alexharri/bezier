@@ -1,3 +1,4 @@
+const { getHandleById } = require("../../handles/getHandles");
 const { addListener, removeListener } = require("../../listeners/listeners");
 const setPointPosition = require("../../actions/point/setPointPosition");
 const { getPointById } = require("../../points/getPoints");
@@ -20,14 +21,14 @@ const getPosDifference = (oldPos, newPos) => ({
   y: newPos.y - oldPos.y,
 });
 
-module.exports = function onPointMouseDown(initialPoint) {
+module.exports = function onHandleMouseDown(initialPoint) {
   const { id } = initialPoint;
   const initialPosition = {
     x: initialPoint.x,
     y: initialPoint.x,
   }
 
-  const wasInitiallySelected = isSelected("__POINT", id);
+  const wasInitiallySelected = isSelected("__HANDLE", id);
   let mouseMoved = false;
   let overrideId;
 
@@ -37,30 +38,17 @@ module.exports = function onPointMouseDown(initialPoint) {
     }
 
     mouseMoved = true;
-    const point = getPointById(id);
-    const positionChange = getPosDifference(point, newPosition);
+    const handle = getHandleById(id);
+    const positionChange = getPosDifference(handle, newPosition);
 
-    const pointIds = getSelectedOfType("__POINT");
-
-    // Moving the points
+    // Moving the handles
     store.dispatch({
-      type: "SET_POINT_POSITION",
+      type: "SET_HANDLE_POSITION",
       payload: {
-        ids: pointIds,
+        ids: getSelectedOfType("__HANDLE"),
         positionChange,
       },
     });
-
-    // Moving the handles
-    for (let i = 0; i < pointIds.length; i += 1) {
-      store.dispatch({
-        type: "SET_HANDLE_POSITION",
-        payload: {
-          ids: getPointHandleIds(pointIds[i]),
-          positionChange,
-        },
-      });
-    }
   });
 
 
@@ -76,14 +64,14 @@ module.exports = function onPointMouseDown(initialPoint) {
     if (wasInitiallySelected && !mouseMoved) {
       if (isKeyDown(keys.SHIFT)) {
         // We remove the point from the selection if the shift key was down
-        removeFromSelection("__POINT", id);
+        removeFromSelection("__HANDLE", id);
       } else {
         /**
          * Remove everything but the point from the selection if the
          * shift key was not down.
          */
         clearSelection();
-        addToSelection("__POINT", id);
+        addToSelection("__HANDLE", id);
       }
     }
 
@@ -91,12 +79,11 @@ module.exports = function onPointMouseDown(initialPoint) {
      * Create new action.
      */
     if (mouseMoved) {
-      const { x, y } = getPointById(id);
-      const ids = getSelectedOfType("__POINT");
+      const { x, y } = getHandleById(id);
       addActionToHistory({
-        type: "MOVE_POINT_AND_HANDLES",
+        type: "SET_HANDLE_POSITION",
         data: {
-          ids,
+          ids: getSelectedOfType("__HANDLE"),
           positionChange: getPosDifference(initialPoint, { x, y }),
         },
       }, false);

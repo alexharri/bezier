@@ -1,4 +1,5 @@
 const getContext = require("../canvas/getContext");
+const isValidPosition = require("../../utils/isValidPosition");
 
 exports.renderCircle = function renderCircle(points, radius, color, stroke) {
   const ctx = getContext();
@@ -27,4 +28,31 @@ exports.renderCircle = function renderCircle(points, radius, color, stroke) {
       ctx.stroke();
     }
   }
+}
+
+exports.renderLine = function renderLine(from, to, color = "#aaa", width = 1) {
+  const ctx = getContext();
+
+  if (!isValidPosition(from)) {
+    throw new Error("Invalid position 'from'.");
+  }
+
+  if (!isValidPosition(to)) {
+    throw new Error("Invalid position 'to'.");
+  }
+
+  if (typeof color !== "string") {
+    throw new Error(`Invalid color. Expected string but got '${color}'.`);
+  }
+
+  if (typeof width !== "number") {
+    throw new Error(`Invalid width. Expected number but got '${width}'.`);
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(from.x, from.y);
+  ctx.lineTo(to.x, to.y);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
 }

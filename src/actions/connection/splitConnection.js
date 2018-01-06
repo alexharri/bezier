@@ -45,15 +45,21 @@ exports.redo = ({ connection, newPoints }) => {
     type: "ADD_CONNECTION",
     data: {
       points: [aId, p3.id],
-      handles: [p1, p2],
+      handles: [p1.id, p2.id],
     }
   });
   actions.push({
     type: "ADD_CONNECTION",
     data: {
       points: [p3.id, bId],
-      handles: [p4, p5],
+      handles: [p4.id, p5.id],
     }
+  });
+
+  // Adding the handles
+  actions.push({
+    type: "ADD_HANDLES",
+    data: [p1, p2, p4, p5],
   });
 
   return actions;
@@ -63,7 +69,7 @@ exports.redo = ({ connection, newPoints }) => {
 exports.undo = ({ connection, newPoints }) => {
   const actions = [];
   const [ aId, bId ] = connection.points;
-  const p3 = newPoints[3];
+  const [ p0, p1, p2, p3, p4, p5, p6 ] = newPoints; // From the splitBezier function
 
   // We add the old connection
   actions.push({
@@ -94,6 +100,12 @@ exports.undo = ({ connection, newPoints }) => {
     data: {
       points: [p3.id, bId],
     }
+  });
+
+  // Adding the handles
+  actions.push({
+    type: "DELETE_HANDLES",
+    data: [p1, p2, p4, p5],
   });
 
   return actions;

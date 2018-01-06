@@ -1,4 +1,5 @@
 const store = require("../store");
+const { getAllConnections } = require("../connections/getConnections");
 const calcDistanceBetweenPositions = require("../../utils/calcDistanceBetweenPositions");
 
 exports.getPointById = function getPointById(id) {
@@ -37,6 +38,20 @@ exports.getPointAtPosition = function getPointAtPosition(position) {
   }
 
   return pointDistance < 225 ? closestPoint : null; // 15px
+}
+
+exports.getPointHandleIds = function getPointHandleIds(id) {
+  const connections = getAllConnections();
+  const handles = [];
+
+  for (let i = 0; i < connections.length; i += 1) {
+    const pointIndex = connections[i].points.indexOf(id);
+    if (pointIndex > -1) {
+      handles.push(connections[i].handles[pointIndex]);
+    }
+  }
+
+  return handles;
 }
 
 exports.getAllPoints = getAllPoints;

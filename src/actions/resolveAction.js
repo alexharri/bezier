@@ -54,7 +54,6 @@ function resolveNestedAction(actions) {
     if (Array.isArray(result)) {
       resolveNestedAction(result); // oh boy
     } else {
-      console.log(result);
       store.dispatch(result);
     }
   }
@@ -91,7 +90,6 @@ module.exports = function resolveAction(action, opts = {}) {
 
   const actionCreator = resolveActionCreator(type, undo);
   const result = actionCreator(data);
-  console.log(result);
 
   if (Array.isArray(result)) {
     resolveNestedAction(result, undo);

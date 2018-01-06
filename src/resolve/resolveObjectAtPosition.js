@@ -1,16 +1,16 @@
 const { getPointAtPosition } = require("../points/getPoints");
 const { getConnectionAtPosition } = require("../connections/getConnections");
-const getHandleAtPosition = require("../connections/getHandleAtPosition");
+const getHandleAtPosition = require("../handles/getHandleAtPosition");
 
 module.exports = function resolveObjectAtPosition(position) {
   /**
    * Returns the closest handle if it's close enough.
    */
-  const handleAndPoint = getHandleAtPosition(position, true);
-  if (handleAndPoint) {
+  const handle = getHandleAtPosition(position);
+  if (handle) {
     return {
       type: "__HANDLE",
-      value: handleAndPoint,
+      value: handle,
     };
   }
 

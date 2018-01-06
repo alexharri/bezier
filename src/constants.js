@@ -1,7 +1,10 @@
 module.exports = {
-  PRIMARY_COLOR:          "#29aaf4",
-  PRIMARY_COLOR_LIGHT:    "#68bef2",
-  PRIMARY_COLOR_LIGHTER:  "#c4e9ff",
+  colors: {
+    PRIMARY:          "#29aaf4",
+    PRIMARY_LIGHT:    "#68bef2",
+    PRIMARY_LIGHTER:  "#c4e9ff",
+    WHITE: "#fff",
+  },
 
   keys: {
     SHIFT: "Shift",

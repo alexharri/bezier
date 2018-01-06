@@ -2,15 +2,14 @@ const { toConnectionId } = require("../connections/connectionId");
 
 const a = "a";
 const b = "b";
+const x = "x";
+const y = "y";
 
 const defaultState = {
   [toConnectionId(a, b)]: {
     id: toConnectionId(a, b),
     points: [a, b],
-    handles: [
-      { x: 240, y: 20 },
-      { x: 360, y: 500 },
-    ],
+    handles: [x, y],
   },
 }
 

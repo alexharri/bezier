@@ -26,7 +26,7 @@ module.exports = function render(position, opts = {}) {
     if (!isValidPosition(position)) {
       throw new Error("Invalid position.");
     }
-  
+
     ctx.drawImage(getCursor(), position.x, position.y);
   }
 }

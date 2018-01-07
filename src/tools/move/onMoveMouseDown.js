@@ -1,10 +1,6 @@
-const { runListeners } = require("../../listeners/listeners");
-const toPosition = require("../../../utils/toPosition");
-const resolveObjectAtPosition = require("../../resolve/resolveObjectAtPosition");
 const resolveObjectId = require("../../resolve/resolveObjectId");
 const { isKeyDown } = require("../../../utils/keyboard");
 const { keys, types } = require("../../constants");
-const render = require("../../render/render");
 const { addListener, removeListener } = require("../../listeners/listeners");
 const { setCursor, releaseOverride } = require("../../../utils/cursor");
 const store = require("../../store");
@@ -23,19 +19,11 @@ const getPosDifference = (oldPos, newPos) => ({
   y: newPos.y - oldPos.y,
 });
 
-module.exports = function resolveMoveMouseDown(e) {
-  const initialPosition = toPosition(e);
-
-  const obj = resolveObjectAtPosition(initialPosition);
+module.exports = function resolveMoveMouseDown(initialPosition, obj) {
   if (!obj) {
-    /**
-     * Simply clear the selection
-     */
-    clearSelection();
-    render(initialPosition);
+    clearSelection(); // We simply clear the selection
     return;
   }
-
 
   const { value, type } = obj;
   
@@ -82,6 +70,7 @@ module.exports = function resolveMoveMouseDown(e) {
     // Releasing the cursor override.
     if (typeof cursorOverrideId === "string") {
       releaseOverride(cursorOverrideId);
+      setCursor("DEFAULT");
     }
 
     // Creates the move action if the mouse was moved
@@ -123,6 +112,4 @@ module.exports = function resolveMoveMouseDown(e) {
   }
 
   selection = addImplicitlySelectedObjects(copySelection());
-
-  render(initialPosition);
 }

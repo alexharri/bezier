@@ -1,5 +1,4 @@
-import { getConnectionById } from "../../connections/getConnections";
-
+const { getConnectionById } = require("../../connections/getConnections");
 const { getPointHandleIds } = require("../../points/getPoints");
 const { types } = require("../../constants");
 

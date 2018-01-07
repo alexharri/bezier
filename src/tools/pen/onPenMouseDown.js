@@ -1,36 +1,19 @@
+const { setCursor } = require("../../../utils/cursor");
+
 const splitBezier = require("../../bezier/splitBezier");
 const getConnectionPoints = require("../../connections/getConnectionPoints");
 const shortid = require("shortid");
-const render = require("../../render/render");
-const splitConnection = require("../../actions/connection/splitConnection");
 const addActionToHistory = require("../../actions/history/addActionToHistory");
-const toPosition = require("../../../utils/toPosition");
-const resolveObjectAtPosition = require("../../resolve/resolveObjectAtPosition");
-const { types } = require("../../constants");
+const onMoveMouseDown = require("../move/onMoveMouseDown");
+const { types, cursors } = require("../../constants");
 
-module.exports = function onConnectionMouseDown(e) {
-  const position = toPosition(e);
-
-  const obj = resolveObjectAtPosition(position);
+module.exports = function onPenMouseDown(position, obj) {
   if (!obj) {
-    /**
-     * Nothing to interact with.
-     *
-     * In the future, a few functions depending on the tool used
-     * should be invoked.
-     *
-     * For example
-     *  - Pen tool  => New vector point
-     *  - Select    => Square select
-     */
-    clearSelection();
-    render(position);
     return;
   }
 
   const { value, type } = obj;
 
-  console.log(type);
   if (type === types.CONN) {
     const { connection, closestPoint } = value;
     const { t } = closestPoint; // t is where we split the path
@@ -52,6 +35,10 @@ module.exports = function onConnectionMouseDown(e) {
         newPoints
       },
     }, true);
-    render(closestPoint);
+    setCursor("DEFAULT"); // There will be a point below the mouse
+  }
+
+  if (type === types.HANDLE || type === types.POINT) {
+    onMoveMouseDown(position, obj);
   }
 }

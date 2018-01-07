@@ -8,8 +8,6 @@ const resolvers = {
   [CONN]:   x => x.connection.id,
 };
 
-console.log(resolvers);
-
 /**
  * Returns the ids of object fetched through the
  * resolveObjectAtPosition function.

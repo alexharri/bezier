@@ -1,19 +1,14 @@
 const shortid = require("shortid");
+const { cursors } = require("../src/constants");
 
 const canvas = document.getElementById("canvas");
-const cursorMap = {
-  DEFAULT: "default_cursor.png",
-  PEN_ADD_POINT: "pen_add_point.png",
-  MOVE: "default_move_cursor.png",
-};
-
 const cursorImageMap = {};
 
 {
-  const keys = Object.keys(cursorMap);
+  const keys = Object.keys(cursors);
   for (let i = 0; i < keys.length; i += 1) {
     const image = new Image();
-    image.src = `/static/images/${cursorMap[keys[i]]}`;
+    image.src = `/static/images/${cursors[keys[i]]}`;
     cursorImageMap[keys[i]] = image;
   }
 }
@@ -41,7 +36,7 @@ exports.setCursor = function setCursor(cursor, opts = {}) {
     return false;
   }
 
-  if (typeof cursorMap[cursor] === "undefined") {
+  if (typeof cursors[cursor] === "undefined") {
     throw new Error(`Invalid cursor '${cursor}'.`);
   }
 
@@ -50,7 +45,7 @@ exports.setCursor = function setCursor(cursor, opts = {}) {
   }
 
   currentCursor = cursor;
-  let cursorStyle = `url(/static/images/${cursorMap[cursor]}), default`;
+  let cursorStyle = `url(/static/images/${cursors[cursor]}), default`;
 
   // canvas.style.cursor = cursorStyle;
 

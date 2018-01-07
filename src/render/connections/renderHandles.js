@@ -28,8 +28,13 @@ function renderHandle(point, handle, opts) {
 
 module.exports = function renderHandles(connection) {
   for (let i = 0; i < connection.handles.length; i += 1) {
+    if (connection.handles[i] === null || connection.points[i] === null) {
+      return;
+    }
+
     const handle = getHandleById(connection.handles[i]);
     const point = getPointById(connection.points[i]);
+
     renderHandle(point, handle);
   }
 }

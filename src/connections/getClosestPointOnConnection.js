@@ -9,11 +9,15 @@ const numApproxPoints = 40;
  * Finds the closest point from a position to the bezier curve that
  * represents the connection.
  *
- * If the closest point is over 20px away null is returned.
+ * If the closest point is over 15px away null is returned.
  *
  * Else it returns an point.
  */
 module.exports = function getClosestPointOnConnection(c, position) {
+  if (c.points.indexOf(null) !== -1) {
+    return null;
+  }
+  
   let closestApprox;
   let secondApprox;
 

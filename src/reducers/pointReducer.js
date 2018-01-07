@@ -17,6 +17,10 @@ module.exports = function reducer(state = defaultState, action) {
       const { selection, positionChange } = action.payload;
       const toMove = selection[types.POINT];
 
+      if (!Array.isArray(toMove)) {
+        return state;
+      }
+
       const newState = {
         ...state,
       };
@@ -25,7 +29,7 @@ module.exports = function reducer(state = defaultState, action) {
         const id = toMove[i];
         const { x, y } = state[id];
         newState[id] = {
-          ...[state.id],
+          ...state[id],
           x: x + positionChange.x,
           y: y + positionChange.y,
         };

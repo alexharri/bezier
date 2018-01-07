@@ -71,4 +71,22 @@ exports.getPointHandleIds = function getPointHandleIds(id) {
   return handles;
 }
 
+exports.getPointConnections = function getPointConnections(id) {
+  if (!id || typeof id !== "string") {
+    throw new Error(`Invalid id. Expected string but got '${id}'`);
+  }
+
+  const cArr = [];
+  const connections = store.getState().connections;
+
+  const keys = Object.keys(connections);
+  for (let i = 0; i < keys.length; i += 1) {
+    if (connections[keys[i]].points.indexOf(id) !== -1) {
+      cArr.push(connections[keys[i]]);
+    }
+  }
+
+  return cArr;
+}
+
 exports.getAllPoints = getAllPoints;

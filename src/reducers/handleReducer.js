@@ -11,6 +11,10 @@ module.exports = function reducer(state = defaultState, action) {
       const { selection, positionChange } = action.payload;
       const toMove = selection[types.HANDLE];
 
+      if (!Array.isArray(toMove)) {
+        return state;
+      }
+
       const newState = {
         ...state,
       };

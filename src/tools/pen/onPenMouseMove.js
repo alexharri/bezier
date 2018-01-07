@@ -1,7 +1,12 @@
+import { getHandleById } from "../../handles/getHandles";
+import { getPointById } from "../../points/getPoints";
+
+const { getPointConnections } = require("../../points/getPoints");
 const { addGuide } = require("../../render/guides");
 const { getSelectedOfType } = require("../../selection");
 const { setCursor } = require("../../utils/cursor");
 const { types } = require("../../constants");
+const approximateFourthBezierPoint = require("../../bezier/approximateFourthBezierPoint");
 
 function setPenCursor(type) {
   if (type === types.CONN) {
@@ -17,11 +22,44 @@ module.exports = function onPenMouseMove(position, obj) {
   if (!obj) {
     // Show guide for new point creation
     addGuide(types.POINT, position);
-    
+
     const selectedPoints = getSelectedOfType(types.POINT);
+
+    /**
+     * If there's one point selected we want to draw a guide
+     * between the selected and possible new point.
+     */
     if (selectedPoints.length === 1) {
+      let strayConnection = false;
+
+      { // Checking for stray connections
+        const connections = getPointConnections(selectedPoints[0]);
+        for (let i = 0; i < connections.length; i += 1) {
+          if (connections[i].points[1] === null) {
+            strayConnection = connections[i];
+            i = connections.length;
+          }
+        }
+      }
+
+      /**
+       * A stray connection means that a handle has been dragged out
+       * from the point.
+       *
+       * If this is the case, we need to draw a bezier guide, but we only
+       * have one handle, so we need to make assumptions about the other.
+       */
+      if (strayConnection) {
+        const newPoints = approximateFourthBezierPoint(
+          getPointById(selectedPoints[0]),
+          getHandleById(strayConnection.handles[0]),
+          null,
+          position);
+        addGuide(types.CONN, newPoints);
+      } else {
+        console.log("LINE");
+      }
       // Show guide curve between points
-      // addGuide(types.CONN);
     }
 
     return;

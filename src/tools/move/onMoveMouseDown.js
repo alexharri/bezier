@@ -1,8 +1,8 @@
 const resolveObjectId = require("../../resolve/resolveObjectId");
-const { isKeyDown } = require("../../../utils/keyboard");
+const { isKeyDown } = require("../../utils/keyboard");
 const { keys, types } = require("../../constants");
 const { addListener, removeListener } = require("../../listeners/listeners");
-const { setCursor, releaseOverride } = require("../../../utils/cursor");
+const { setCursor, releaseOverride } = require("../../utils/cursor");
 const store = require("../../store");
 const addActionToHistory = require("../../actions/history/addActionToHistory");
 const addImplicitlySelectedObjects = require("./addImplicitlySelectedObjects");

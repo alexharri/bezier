@@ -1,7 +1,7 @@
-const tools = require("../src/tools/tools");
-const { keys } = require("../src/constants");
-const undo = require("../src/actions/history/undo");
-const redo = require("../src/actions/history/redo");
+const tools = require("../tools/tools");
+const { keys } = require("../constants");
+const undo = require("../actions/history/undo");
+const redo = require("../actions/history/redo");
 
 const activeKeys = {};
 

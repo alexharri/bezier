@@ -1,11 +1,12 @@
+const { getGuidesOfType } = require("../guides");
 const { getSelectedOfType } = require("../../selection");
 const { getAllPoints } = require("../../points/getPoints");
 const { renderCircle } = require("../primitives");
-const { colors } = require("../../constants");
+const { colors, types } = require("../../constants");
 
 module.exports = function renderPoints() {
   const points = getAllPoints();
-  const selectedPoints = getSelectedOfType("__POINT");
+  const selectedPoints = getSelectedOfType(types.POINT);
   for (let i = 0; i < points.length; i += 1) {
     const isPointSelected = selectedPoints.indexOf(points[i].id) > -1;
     if (isPointSelected) {
@@ -13,5 +14,10 @@ module.exports = function renderPoints() {
     } else {
       renderCircle(points[i], 4, colors.PRIMARY);
     }
+  }
+
+  const pointGuides = getGuidesOfType(types.POINT);
+  for (let i = 0; i < pointGuides.length; i += 1) {
+    renderCircle(pointGuides[i], 4, colors.PRIMARY);
   }
 }

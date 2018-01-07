@@ -1,7 +1,6 @@
 const getContext = require("../../canvas/getContext");
 const getConnectionPoints = require("../../connections/getConnectionPoints");
 const { getAllConnections } = require("../../connections/getConnections");
-const { renderPointGuide, clearPointGuide } = require("./connectionGuides");
 const renderHandles = require("./renderHandles");
 
 module.exports = function renderConnections() {
@@ -28,7 +27,4 @@ module.exports = function renderConnections() {
     // Drawing the handles (and handle lines)
     renderHandles(connections[i]);
   }
-
-  renderPointGuide();
-  clearPointGuide();
 }

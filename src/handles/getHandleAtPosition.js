@@ -1,5 +1,5 @@
 const { getAllHandles } = require("./getHandles");
-const calcDistanceBetweenPositions = require("../../utils/calcDistanceBetweenPositions");
+const calcDistanceBetweenPositions = require("../utils/calcDistanceBetweenPositions");
 const { getPointById } = require("../points/getPoints");
 
 module.exports = function getHandleAtPosition(position, getPoint) {

@@ -1,6 +1,6 @@
 const calcBezierPointAt = require("./calcBezierPointAt");
-const calcDistanceBetweenPositions = require("../../utils/calcDistanceBetweenPositions");
-const getIntermediateNumber = require("../../utils/getIntermediateNumber");
+const calcDistanceBetweenPositions = require("../utils/calcDistanceBetweenPositions");
+const getIntermediateNumber = require("../utils/getIntermediateNumber");
 const getPointsBetween = require("./getPointsBetween");
 
 const numApproxPoints = 40;

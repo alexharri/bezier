@@ -1,5 +1,5 @@
 const { getPointById } = require("./getPoints");
-const isValidPosition = require("../../utils/isValidPosition");
+const isValidPosition = require("../utils/isValidPosition");
 const setPointHandlePositions = require("../connections/setPointHandlePositions");
 
 module.exports = function setPointPosition(id, position) {

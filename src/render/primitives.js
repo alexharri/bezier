@@ -1,5 +1,5 @@
 const getContext = require("../canvas/getContext");
-const isValidPosition = require("../../utils/isValidPosition");
+const isValidPosition = require("../utils/isValidPosition");
 
 exports.renderCircle = function renderCircle(points, radius, color, stroke) {
   const ctx = getContext();

@@ -1,5 +1,5 @@
 const getPointHandles = require("../points/getPointHandles");
-const isValidPosition = require("../../utils/isValidPosition");
+const isValidPosition = require("../utils/isValidPosition");
 
 module.exports = function setPointHandlePositions(positionChange, pointId) {
   const handles = getPointHandles(pointId);

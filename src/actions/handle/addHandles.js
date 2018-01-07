@@ -1,4 +1,4 @@
-const isValidPosition = require("../../../utils/isValidPosition");
+const isValidPosition = require("../../utils/isValidPosition");
 
 module.exports = {
   redo: (handles) => {

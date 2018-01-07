@@ -1,8 +1,8 @@
 const { tools, defaultToolCursors } = require("../constants");
-const toPosition = require("../../utils/toPosition");
+const toPosition = require("../utils/toPosition");
 const { runListeners } = require("../listeners/listeners");
 const resolveObjectAtPosition = require("../resolve/resolveObjectAtPosition");
-const { setCursor } = require("../../utils/cursor");
+const { setCursor } = require("../utils/cursor");
 const render = require("../render/render");
 
 // mousedown

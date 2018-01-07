@@ -1,6 +1,6 @@
 const store = require("../store");
 const { getAllConnections } = require("../connections/getConnections");
-const calcDistanceBetweenPositions = require("../../utils/calcDistanceBetweenPositions");
+const calcDistanceBetweenPositions = require("../utils/calcDistanceBetweenPositions");
 
 /**
  * Returns a point with a specific id

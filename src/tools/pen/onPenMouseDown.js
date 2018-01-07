@@ -1,11 +1,17 @@
-const { setCursor } = require("../../../utils/cursor");
-
+const { isKeyDown } = require("../../utils/keyboard");
+const { setCursor } = require("../../utils/cursor");
 const splitBezier = require("../../bezier/splitBezier");
 const getConnectionPoints = require("../../connections/getConnectionPoints");
 const shortid = require("shortid");
 const addActionToHistory = require("../../actions/history/addActionToHistory");
 const onMoveMouseDown = require("../move/onMoveMouseDown");
-const { types, cursors } = require("../../constants");
+const { types, cursors, keys } = require("../../constants");
+const {
+  addToSelection,
+  clearSelection,
+  isSelected,
+  removeFromSelection,
+} = require("../../selection");
 
 module.exports = function onPenMouseDown(position, obj) {
   if (!obj) {
@@ -27,7 +33,11 @@ module.exports = function onPenMouseDown(position, obj) {
     // p2 and p4 will be siblings
     newPoints[2].sibling = newPoints[4].id;
     newPoints[4].sibling = newPoints[2].id;
-  
+
+    // Selecting the new point
+    clearSelection();
+    addToSelection(types.POINT, newPoints[3].id);
+
     addActionToHistory({
       type: "SPLIT_CONNECTION",
       data: {
@@ -38,7 +48,16 @@ module.exports = function onPenMouseDown(position, obj) {
     setCursor("DEFAULT"); // There will be a point below the mouse
   }
 
-  if (type === types.HANDLE || type === types.POINT) {
+  if (type === types.HANDLE) {
     onMoveMouseDown(position, obj);
+  }
+
+  if (type === types.POINT) {
+    if (!isKeyDown(keys.SHIFT)) {
+      clearSelection();
+    }
+    if (!isSelected(types.POINT, value.id)) {
+      addToSelection(types.POINT, value.id);
+    }
   }
 }

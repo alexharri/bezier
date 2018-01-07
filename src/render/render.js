@@ -1,8 +1,9 @@
 const getContext = require("../canvas/getContext");
 const renderConnections = require("./connections/renderConnections");
 const renderPoints = require("./points/renderPoints");
-const isValidPosition = require("../../utils/isValidPosition");
-const { getCursor } = require("../../utils/cursor");
+const isValidPosition = require("../utils/isValidPosition");
+const { getCursor } = require("../utils/cursor");
+const { resetGuides } = require("./guides");
 
 const ctxHeight = 800;
 const ctxWidth = 800;
@@ -15,6 +16,8 @@ module.exports = function render(position, opts = {}) {
 
   renderConnections();
   renderPoints();
+
+  resetGuides();
 
   if (!opts.noPosition) { // Skips all position based draws and checks
     if (!opts.useLastPosition) {

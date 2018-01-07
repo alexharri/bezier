@@ -1,5 +1,5 @@
 const shortid = require("shortid");
-const { cursors } = require("../src/constants");
+const { cursors } = require("../constants");
 
 const canvas = document.getElementById("canvas");
 const cursorImageMap = {};

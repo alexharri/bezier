@@ -1,7 +1,7 @@
 const { onToolMouseDown, onToolMouseMove, onToolMouseUp } = require("./src/tools/tools");
-const toPosition = require("./utils/toPosition");
+const toPosition = require("./src/utils/toPosition");
 const render = require("./src/render/render");
-const { onKeyDown, onKeyUp } = require("./utils/keyboard");
+const { onKeyDown, onKeyUp } = require("./src/utils/keyboard");
 
 window.onkeydown  = onKeyDown;
 window.onkeyup    = onKeyUp;

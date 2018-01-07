@@ -1,4 +1,4 @@
-const getIntermediateNumber = require("../../utils/getIntermediateNumber");
+const getIntermediateNumber = require("../utils/getIntermediateNumber");
 const calcBezierPointAt = require("./calcBezierPointAt");
 
 /**

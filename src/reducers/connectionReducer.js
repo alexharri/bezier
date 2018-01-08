@@ -1,4 +1,5 @@
 const { toConnectionId } = require("../connections/connectionId");
+const { checkValidConnection, checkIdArray } = require("../connections/checkValidConnection");
 
 const a = "a";
 const b = "b";
@@ -16,35 +17,35 @@ const defaultState = {
 module.exports = function reducer(state = defaultState, action) {
   switch (action.type) {
     case "ADD_CONNECTION": {
+      checkValidConnection(action.payload);
       const { id } = action.payload;
+
+      if (state[id]) {
+        throw new Error(`There is already a connection by the id '${id}'`);
+      }
 
       return {
         ...state,
         [id]: action.payload,
       };
     }
-    case "REPLACE_CONNECTION": {
-      const { handles, points, id } = action.payload;
+    case "REPLACE_CONNECTION_POINT_IDS": {
+      const { id, handles, points } = action.payload;
 
       if (!state[id]) {
         throw new Error(`Connection by id '${id}' does not exist.`);
       }
 
+      if (handles)  { checkIdArray(handles); }
+      if (points)   { checkIdArray(points); }
+
       return {
         ...state,
         [id]: {
           ...state[id],
-          handles: handles.map((handle, i) => (
-            handle === undefined
-              ? state[id].handles[i]
-              : handle
-          )),
-          points: points.map((point, i) => (
-            point === undefined
-              ? state[id].points[i]
-              : point
-          )),
-        }
+          handles:  handles || state[id].handles,
+          points:   points  || state[id].points,
+        },
       };
     }
     case "DELETE_CONNECTION": {

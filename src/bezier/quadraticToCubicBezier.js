@@ -11,7 +11,20 @@ function calcNewHandles(p0, p3, p1) {
   ];
 }
 
-module.exports = function splitBezier(p0, p1, p2, p3) {
+/**
+ * Quadratic means that three points are present, whilst cubic means
+ * four are.
+ *
+ * This takes in three points, but one of the handles (p1, p2) must be
+ * position and one must be null.
+ *
+ * This returns four new points, but the handle that was present will
+ * have a 15% smaller magnitude and the other handle will have 25%
+ * of it's magnitute.
+ *
+ * This makes the curve feel more natural.
+ */
+module.exports = function quadraticToCubicBezier(p0, p1, p2, p3) {
   if (p1 === null) {
     if (p2 === null) {
       throw new Error(`Expected p2 not to be null.`);

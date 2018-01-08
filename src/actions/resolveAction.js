@@ -35,24 +35,28 @@ function resolveActionCreator(type, undo) {
       throw new Error(`Invalid action creator of type: '${type}'. Could not '${undoOrRedo}'.`);  
     }
     return actions[type][undoOrRedo];
+  } else if (typeof actions[type] === "function") {
+    /**
+     * Higher order action creator. It returns an array of actions.
+     *
+     * Higher order action creators can't be flipped, but the actions
+     * creators that they return can be.
+     */
+    return actions[type];
   }
 
   throw new Error(`Invalid action creator of type: '${type}'.`);
 }
 
-function resolveNestedAction(actions) {
+function resolveNestedAction(actions, undo) {
   for (let i = 0; i < actions.length; i += 1) {
-    const { type, data, selection } = actions[i];
+    const { type, data } = actions[i];
   
-    /**
-     * Always passing false for undo may seem counterintuitive at first,
-     * but we only want to flip the top level action, not sub-actions.
-     */
-    const actionCreator = resolveActionCreator(type, false);
+    const actionCreator = resolveActionCreator(type, undo);
     const result = actionCreator(data);
 
     if (Array.isArray(result)) {
-      resolveNestedAction(result); // oh boy
+      resolveNestedAction(result, undo); // oh boy
     } else {
       store.dispatch(result);
     }

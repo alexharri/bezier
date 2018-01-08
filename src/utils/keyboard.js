@@ -28,18 +28,21 @@ exports.onKeyDown = function onKeyDown({ key, repeat }) {
     throw new Error(`Invalid key. Expected string but got '${key}'.`);
   }
 
-  if (key === "Z" && isKeyDown(keys.CONTROL) && isKeyDown(keys.SHIFT)) {
+  // Windows
+  if (key.toLowerCase() === "z" && isKeyDown(keys.CONTROL) && isKeyDown(keys.SHIFT)) {
     redo();
     return;
   }
-
-  if (key === "z" && isKeyDown("Meta") && isKeyDown(keys.SHIFT)) {
-    redo();
+  if (key === "z" && isKeyDown(keys.CONTROL)) {
+    undo();
     return;
   }
 
-  console.log(key);
-
+  // MacOS - Meta is Command
+  if (key.toLowerCase() === "z" && isKeyDown("Meta") && isKeyDown(keys.SHIFT)) {
+    redo();
+    return;
+  }
   if (key === "z" && isKeyDown("Meta")) {
     undo();
     return;

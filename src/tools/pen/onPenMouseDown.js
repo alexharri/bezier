@@ -1,9 +1,8 @@
-
 const shortid = require("shortid");
 
 const { addListener, removeListener } = require("../../listeners/listeners");
-const { getAllConnections } = require("../../connections/getConnections");
 const { isKeyDown } = require("../../utils/keyboard");
+const getStrayConnection = require("../../connections/getStrayConnection");
 const { getSelectedOfType } = require("../../selection");
 const { setCursor, releaseOverride } = require("../../utils/cursor");
 const splitBezier = require("../../bezier/splitBezier");
@@ -13,27 +12,10 @@ const onMoveMouseDown = require("../move/onMoveMouseDown");
 const { types, cursors, keys } = require("../../constants");
 const store = require("../../store");
 const getPosDifference = require("../../utils/getPosDifference");
-const approximateFourthBezierPoint = require("../../bezier/approximateFourthBezierPoint");
-const { getPointConnections, getPointById } = require("../../points/getPoints");
+const quadraticToCubicBezier = require("../../bezier/quadraticToCubicBezier");
+const { getPointById } = require("../../points/getPoints");
 const { getHandleById } = require("../../handles/getHandles");
-const { type } = require("../../constants");
-const {
-  addToSelection,
-  clearSelection,
-  isSelected,
-} = require("../../selection");
-
-function getStrayConnection(pointId) {
-  console.log(pointId);
-  const connections = getPointConnections(pointId);
-  for (let i = 0; i < connections.length; i += 1) {
-    if (connections[i].points[1] === null) {
-      return connections[i];
-    }
-  }
-
-  return null;
-}
+const { addToSelection, clearSelection, isSelected } = require("../../selection");
 
 module.exports = function onPenMouseDown(initialPosition, obj) {
   if (!obj) {
@@ -56,61 +38,21 @@ module.exports = function onPenMouseDown(initialPosition, obj) {
          * There is a stray connection, and we're connecting it to
          * the click position.
          *
-         * No listeners here, the connection is completed instantly.
+         * No listeners needed here, the connection is completed instantly.
          */
-        const newPoints = approximateFourthBezierPoint(
+        const newPoints = quadraticToCubicBezier(
           getPointById(strayConnection.points[0]),
           getHandleById(strayConnection.handles[0]),
           null,
           initialPosition);
-    
-        const [ p0, p1, p2, p3 ] = newPoints;
-        const pointIds = newPoints.map(() => shortid());
-    
-        const handleId  = strayConnection.handles[0];
-        const pointId   = strayConnection.points[0];
-
-        /*
-        store.dispatch({
-          type: "REPLACE_CONNECTION",
-          payload: {
-            id: strayConnection.id,
-            points: [
-              pointId,
-              pointIds[3],
-            ],
-            handles: [
-              handleId,
-              pointIds[2],
-            ],
-          },
-        });
-        store.dispatch({
-          type: "ADD_POINT",
-          payload: { ...p3, id: pointIds[3] }
-        });
-        store.dispatch({
-          type: "ADD_HANDLES",
-          payload: [{ ...p2, id: pointIds[2] }],
-        });
-        store.dispatch({
-          type: "MOVE",
-          payload: {
-            selection: {
-              [types.HANDLE]: [handleId],
-            },
-            positionChange: getPosDifference(getHandleById(strayConnection.handles[0]), p1),
-          },
-        });
-        */
 
         addActionToHistory({
           type: "COMPLETE_STRAY_CONNECTION",
           data: {
             connection: strayConnection,
-            handleId,
+            handleId: strayConnection.handles[0],
             newPoints,
-            pointIds,
+            pointIds: newPoints.map(() => shortid()),
           },
         }, true);
       }

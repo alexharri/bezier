@@ -6,7 +6,7 @@ const { addGuide } = require("../../render/guides");
 const { getSelectedOfType } = require("../../selection");
 const { setCursor } = require("../../utils/cursor");
 const { types } = require("../../constants");
-const approximateFourthBezierPoint = require("../../bezier/approximateFourthBezierPoint");
+const quadraticToCubicBezier = require("../../bezier/quadraticToCubicBezier");
 
 function setPenCursor(type) {
   if (type === types.CONN) {
@@ -50,7 +50,7 @@ module.exports = function onPenMouseMove(position, obj) {
        * have one handle, so we need to make assumptions about the other.
        */
       if (strayConnection) {
-        const newPoints = approximateFourthBezierPoint(
+        const newPoints = quadraticToCubicBezier(
           getPointById(selectedPoints[0]),
           getHandleById(strayConnection.handles[0]),
           null,

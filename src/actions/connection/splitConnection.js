@@ -1,4 +1,4 @@
-exports.redo = ({ connection, newPoints }) => {
+exports.redo = ({ connection, newPoints, ids }) => {
   const actions = [];
   
   const [ aId, bId ] = connection.points; // These are the point ids, not the actual points.
@@ -36,6 +36,7 @@ exports.redo = ({ connection, newPoints }) => {
   actions.push({
     type: "ADD_CONNECTION",
     data: {
+      id: ids[0],
       points: [aId, p3.id],
       handles: [p1.id, p2.id],
     }
@@ -43,6 +44,7 @@ exports.redo = ({ connection, newPoints }) => {
   actions.push({
     type: "ADD_CONNECTION",
     data: {
+      id: ids[1],
       points: [p3.id, bId],
       handles: [p4.id, p5.id],
     }
@@ -58,7 +60,7 @@ exports.redo = ({ connection, newPoints }) => {
 }
 
 // See above function
-exports.undo = ({ connection, newPoints }) => {
+exports.undo = ({ connection, newPoints, ids }) => {
   const actions = [];
   const [ aId, bId ] = connection.points;
   const [ p0, p1, p2, p3, p4, p5, p6 ] = newPoints; // From the splitBezier function
@@ -83,15 +85,11 @@ exports.undo = ({ connection, newPoints }) => {
    */
   actions.push({
     type: "DELETE_CONNECTION",
-    data: {
-      points: [aId, p3.id],
-    }
+    data: { id: ids[0] },
   });
   actions.push({
     type: "DELETE_CONNECTION",
-    data: {
-      points: [p3.id, bId],
-    }
+    data: { id: ids[1] },
   });
 
   // Adding the handles

@@ -1,7 +1,8 @@
 {
   "scripts": {
-    "build": "SET NODE_ENV=production&&webpack -p",
-    "dev": "SET NODE_ENV=development&&webpack-dev-server --inline --hot --progress --watch ./ --content-base ./ --port 8080 --config webpack.config.js"
+    "start": "npm run dev",
+    "build": "webpack -p",
+    "dev": "webpack-dev-server --inline --hot --progress --watch ./ --content-base ./ --port 8080 --config webpack.config.js"
   },
   "dependencies": {
     "babel-core": "^6.26.0",

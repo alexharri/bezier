@@ -7,6 +7,9 @@ const addPoint = require("./point/addPoint");
 // Connection actions
 const addConnection = require("./connection/addConnection");
 const splitConnection = require("./connection/splitConnection");
+const addStrayConnection = require("./connection/addStrayConnection");
+const completeStrayConnection = require("./connection/completeStrayConnection");
+const replaceConnectionPointIds = require("./connection/replaceConnectionPointIds");
 
 // Handle actions
 const addHandles = require("./handle/addHandles");
@@ -28,6 +31,9 @@ module.exports = Object.freeze({
   ADD_CONNECTION: addConnection,
   DELETE_CONNECTION: reverse(addConnection),
   SPLIT_CONNECTION: splitConnection,
+  ADD_STRAY_CONNECTION: addStrayConnection,
+  COMPLETE_STRAY_CONNECTION: completeStrayConnection,
+  REPLACE_CONNECTION_POINT_IDS: replaceConnectionPointIds,
 
   // Handle actions
   ADD_HANDLES: addHandles,

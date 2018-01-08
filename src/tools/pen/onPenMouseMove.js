@@ -57,11 +57,14 @@ module.exports = function onPenMouseMove(position, obj) {
           position);
         addGuide(types.CONN, newPoints);
       } else {
+        /**
+         * There is a single connection selected with no stray connections,
+         * so we should show a guide line between them.
+         */
         console.log("LINE");
       }
       // Show guide curve between points
     }
-
     return;
   }
 

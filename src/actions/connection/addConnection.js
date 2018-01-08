@@ -1,8 +1,7 @@
 const { toConnectionId } = require("../../connections/connectionId");
 
 exports.redo = (data) => {
-  const { points, handles } = data;
-  const id = toConnectionId(points[0], points[1]);
+  const { points, handles, id } = data;
 
   return {
     type: "ADD_CONNECTION",
@@ -14,7 +13,9 @@ exports.redo = (data) => {
   }
 };
 
-exports.undo = data => ({
-  type: "DELETE_CONNECTION",
-  payload: toConnectionId(data.points[0], data.points[1]),
-});
+exports.undo = ({ id }) => {
+  return {
+    type: "DELETE_CONNECTION",
+    payload: id,
+  };
+}

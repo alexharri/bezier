@@ -4,6 +4,7 @@ const shortid = require("shortid");
 const { addListener, removeListener } = require("../../listeners/listeners");
 const { getAllConnections } = require("../../connections/getConnections");
 const { isKeyDown } = require("../../utils/keyboard");
+const { getSelectedOfType } = require("../../selection");
 const { setCursor, releaseOverride } = require("../../utils/cursor");
 const splitBezier = require("../../bezier/splitBezier");
 const getConnectionPoints = require("../../connections/getConnectionPoints");
@@ -12,19 +13,117 @@ const onMoveMouseDown = require("../move/onMoveMouseDown");
 const { types, cursors, keys } = require("../../constants");
 const store = require("../../store");
 const getPosDifference = require("../../utils/getPosDifference");
+const approximateFourthBezierPoint = require("../../bezier/approximateFourthBezierPoint");
+const { getPointConnections, getPointById } = require("../../points/getPoints");
+const { getHandleById } = require("../../handles/getHandles");
+const { type } = require("../../constants");
 const {
   addToSelection,
   clearSelection,
   isSelected,
 } = require("../../selection");
 
+function getStrayConnection(pointId) {
+  console.log(pointId);
+  const connections = getPointConnections(pointId);
+  for (let i = 0; i < connections.length; i += 1) {
+    if (connections[i].points[1] === null) {
+      return connections[i];
+    }
+  }
+
+  return null;
+}
+
 module.exports = function onPenMouseDown(initialPosition, obj) {
   if (!obj) {
+    /**
+     * Nothing was clicked on, let's see if there are some selected
+     * points.
+     */
+    const selectedPoints = getSelectedOfType(types.POINT);
+
+    if (selectedPoints.length === 1) {
+      /**
+       * A single selected point means we are going to be creating a
+       * path between that point and where we clicked.
+       *
+       * If there's a stray connection, we use it.
+       */
+      const strayConnection = getStrayConnection(selectedPoints[0]);
+      if (strayConnection) {
+        /**
+         * There is a stray connection, and we're connecting it to
+         * the click position.
+         *
+         * No listeners here, the connection is completed instantly.
+         */
+        const newPoints = approximateFourthBezierPoint(
+          getPointById(strayConnection.points[0]),
+          getHandleById(strayConnection.handles[0]),
+          null,
+          initialPosition);
+    
+        const [ p0, p1, p2, p3 ] = newPoints;
+        const pointIds = newPoints.map(() => shortid());
+    
+        const handleId  = strayConnection.handles[0];
+        const pointId   = strayConnection.points[0];
+
+        /*
+        store.dispatch({
+          type: "REPLACE_CONNECTION",
+          payload: {
+            id: strayConnection.id,
+            points: [
+              pointId,
+              pointIds[3],
+            ],
+            handles: [
+              handleId,
+              pointIds[2],
+            ],
+          },
+        });
+        store.dispatch({
+          type: "ADD_POINT",
+          payload: { ...p3, id: pointIds[3] }
+        });
+        store.dispatch({
+          type: "ADD_HANDLES",
+          payload: [{ ...p2, id: pointIds[2] }],
+        });
+        store.dispatch({
+          type: "MOVE",
+          payload: {
+            selection: {
+              [types.HANDLE]: [handleId],
+            },
+            positionChange: getPosDifference(getHandleById(strayConnection.handles[0]), p1),
+          },
+        });
+        */
+
+        addActionToHistory({
+          type: "COMPLETE_STRAY_CONNECTION",
+          data: {
+            connection: strayConnection,
+            handleId,
+            newPoints,
+            pointIds,
+          },
+        }, true);
+      }
+    }
     return;
   }
 
   const { value, type } = obj;
 
+  /**
+   * We clicked on a connection with the pen tool, so we
+   * split the connection.
+   */
   if (type === types.CONN) {
     const { connection, closestPoint } = value;
     const { t } = closestPoint; // t is where we split the path
@@ -46,6 +145,7 @@ module.exports = function onPenMouseDown(initialPosition, obj) {
     addActionToHistory({
       type: "SPLIT_CONNECTION",
       data: {
+        ids: [shortid(), shortid()], 
         connection,
         newPoints
       },
@@ -53,14 +153,22 @@ module.exports = function onPenMouseDown(initialPosition, obj) {
     setCursor("DEFAULT"); // There will be a point below the mouse
   }
 
+  /**
+   * If we click a handle, we simply move it.
+   */
   if (type === types.HANDLE) {
     onMoveMouseDown(initialPosition, obj);
   }
 
+  /**
+   * This is where things get fun.
+   */
   if (type === types.POINT) {
+    // We clear the selection if shift is not being held
     if (!isKeyDown(keys.SHIFT)) {
       clearSelection();
     }
+    // The point however, will always be selected
     if (!isSelected(types.POINT, value.id)) {
       addToSelection(types.POINT, value.id);
     }
@@ -69,75 +177,81 @@ module.exports = function onPenMouseDown(initialPosition, obj) {
     let cursorOverrideId;
     let lastPosition = initialPosition;
 
-    let connectionId = shortid();
-    let handleId = shortid();
-    let hasStrayConnection = false;
+    const selectedPoints = getSelectedOfType(types.POINT);
+    let strayConnection = selectedPoints.length === 1
+      ? getStrayConnection(selectedPoints[0])
+      : null;
 
-    /*
-    { // Checking for stray connections
-      const connections = getPointConnections(selectedPoints[0]);
-      for (let i = 0; i < connections.length; i += 1) {
-        if (connections[i].points[1] === null) {
-          strayConnection = connections[i];
-          i = connections.length;
-        }
-      }
-    }
-    */
+    if (!strayConnection) {
+      /**
+       * If there's no stray connection we create one if the mouse is
+       * moved.
+       *
+       * Otherwise nothing happens except that the point is selected.
+       */
 
-    const listenerId = addListener("mousemove", (currentPosition) => {
-      if (!mouseMoved && !hasStrayConnection) {
-        mouseMoved = true;
-        cursorOverrideId = setCursor("PEN", { override: true });
+      let newConnectionId = shortid();
+      let newHandleId = shortid();
 
-        store.dispatch({
-          type: "ADD_CONNECTION",
-          payload: {
-            id: connectionId,
-            points: [value.id, null],
-            handles: [handleId, null],
-          }
-        });
-        store.dispatch({
-          type: "ADD_HANDLES",
-          payload: [{
-            x: currentPosition.x,
-            y: currentPosition.y,
-            id: handleId,
-          }],
-        });
-      } else {
-        store.dispatch({
-          type: "MOVE",
-          payload: {
-            selection: {
-              [types.HANDLE]: [handleId],
+      const listenerId = addListener("mousemove", (currentPosition) => {
+        if (!mouseMoved) {
+          // This creates the new stray connection and handle
+          mouseMoved = true;
+          cursorOverrideId = setCursor("PEN", { override: true });
+
+          store.dispatch({
+            type: "ADD_CONNECTION",
+            payload: {
+              id: newConnectionId,
+              points: [value.id, null],
+              handles: [newHandleId, null],
+            }
+          });
+          store.dispatch({
+            type: "ADD_HANDLES",
+            payload: [{
+              x: currentPosition.x,
+              y: currentPosition.y,
+              id: newHandleId,
+            }],
+          });
+        } else {
+          // Mouse was already moved, so we just update the position.
+          store.dispatch({
+            type: "MOVE",
+            payload: {
+              selection: {
+                [types.HANDLE]: [newHandleId],
+              },
+              positionChange: getPosDifference(lastPosition, currentPosition),
             },
-            positionChange: getPosDifference(lastPosition, currentPosition),
-          },
-        });
-      }
+          });
+        }
+        
+        lastPosition = currentPosition;
+      });
 
-      lastPosition = currentPosition;
-    });
-
-    addListener("mouseup", (currentPosition) => {
-      removeListener("mousemove", listenerId);
-
-      if (typeof cursorOverrideId === "string") {
-        releaseOverride(cursorOverrideId);
-        setCursor("DEFAULT");
-      }
-
-      // Creates the move action if the mouse was moved
-      if (mouseMoved) {
-        addActionToHistory({
-          type: "MOVE",
-          data: {
-            positionChange: getPosDifference(initialPosition, lastPosition),
-          },
-        }, false);
-      }
-    }, true);
+      addListener("mouseup", () => {
+        removeListener("mousemove", listenerId);
+  
+        if (typeof cursorOverrideId === "string") {
+          releaseOverride(cursorOverrideId);
+          setCursor("DEFAULT");
+        }
+  
+        // Creates the action to create the new stray connection.
+        if (mouseMoved && !strayConnection) {
+          addActionToHistory({
+            type: "ADD_STRAY_CONNECTION",
+            data: {
+              pointId: selectedPoints[0],
+              connectionId: newConnectionId,
+              handleId: newHandleId,
+              handlePosition: lastPosition,
+            }
+          }, false);
+        }
+      }, true);
+    }
   }
 }

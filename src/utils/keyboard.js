@@ -33,7 +33,14 @@ exports.onKeyDown = function onKeyDown({ key, repeat }) {
     return;
   }
 
-  if (key === "z" && isKeyDown(keys.CONTROL)) {
+  if (key === "z" && isKeyDown("Meta") && isKeyDown(keys.SHIFT)) {
+    redo();
+    return;
+  }
+
+  console.log(key);
+
+  if (key === "z" && isKeyDown("Meta")) {
     undo();
     return;
   }

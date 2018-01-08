@@ -2,13 +2,9 @@ const { getHandleById } = require("../../handles/getHandles");
 const getPosDifference = require("../../utils/getPosDifference");
 const { types } = require("../../constants");
 
-module.exports = (data) => {
+module.exports = ({ handleId, newPoints, pointIds, connection }) => {
   const actions = [];
-  
-  const [ p0, p1, p2, p3 ] = data.newPoints;
-  const pointIds = data.pointIds;
-
-  const { connection } = data;
+  const [ p0, p1, p2, p3 ] = newPoints;
 
   actions.push({
     // pointIds is loosely defined as point and handle ids here.
@@ -46,7 +42,7 @@ module.exports = (data) => {
     type: "MOVE",
     data: {
       selection: {
-        [types.HANDLE]: [data.handleId],
+        [types.HANDLE]: [handleId],
       },
       positionChange: getPosDifference(getHandleById(connection.handles[0]), p1),
     },

@@ -11,11 +11,13 @@ const addActionToHistory = require("../../actions/history/addActionToHistory");
 const onMoveMouseDown = require("../move/onMoveMouseDown");
 const { types, cursors, keys } = require("../../constants");
 const store = require("../../store");
-const getPosDifference = require("../../utils/getPosDifference");
 const quadraticToCubicBezier = require("../../bezier/quadraticToCubicBezier");
 const { getPointById } = require("../../points/getPoints");
 const { getHandleById } = require("../../handles/getHandles");
+const getPosDifference = require("../../utils/getPosDifference");
 const { addToSelection, clearSelection, isSelected } = require("../../selection");
+
+const onPenAddPoint = require("./onPenAddPoint");
 
 module.exports = function onPenMouseDown(initialPosition, obj) {
   if (!obj) {
@@ -45,17 +47,23 @@ module.exports = function onPenMouseDown(initialPosition, obj) {
           getHandleById(strayConnection.handles[0]),
           null,
           initialPosition);
+        const pointIds = newPoints.map(() => shortid());
 
+        clearSelection();
+        addToSelection(types.POINT, pointIds[3]); // The new point
         addActionToHistory({
           type: "COMPLETE_STRAY_CONNECTION",
           data: {
             connection: strayConnection,
             handleId: strayConnection.handles[0],
             newPoints,
-            pointIds: newPoints.map(() => shortid()),
+            pointIds,
           },
         }, true);
       }
+    } else {
+      // No or multiple points selected, so we create an unconnected point
+      onPenAddPoint(initialPosition);
     }
     return;
   }

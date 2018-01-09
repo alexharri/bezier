@@ -34,8 +34,13 @@ module.exports = function renderConnections() {
     renderHandles(connections[i]);
   }
 
-  const guides = getGuidesOfType(types.CONN);
-  for (let i = 0; i < guides.length; i += 1) {
-    drawPath(guides[i], 1, colors.PRIMARY);
-  }
+  getGuidesOfType(types.CONN).forEach((guide) => {
+    drawPath(guide, 1, colors.PRIMARY);
+  });
+  
+  getGuidesOfType(types.LINE).forEach((line) => {
+    const ctx = getContext();
+    
+    drawPath(guide, 1, colors.PRIMARY);
+  });
 }

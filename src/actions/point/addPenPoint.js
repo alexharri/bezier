@@ -1,6 +1,13 @@
 const { types } = require("../../constants");
 
-module.exports = function addPointComplex(data) {
+/**
+ * "Pen point" just means that the point was dragged/connected
+ * or some other was applied to it other than creating a single
+ * point.
+ *
+ * I can't find a better name for this, I'm sorry.
+ */
+module.exports = function addPenPoint(data) {
   const {
     point,
     newHandle,
@@ -11,17 +18,15 @@ module.exports = function addPointComplex(data) {
     newCompletedConnectionHandle, // Don't judge me.
   } = data;
 
-  console.log(data);
-
   const actions = [
-    {
+    { // The initial point that was created when we clicked.
       type: "ADD_POINT",
       data: point,
     },
   ];
 
   /**
-   * The handle for the NEW stray connection.
+   * The handle and connection for the NEW stray connection.
    *
    * This is NOT the handle for the connection that this point
    * completes (if it does).
@@ -52,7 +57,7 @@ module.exports = function addPointComplex(data) {
       }
     });
 
-    // The handle that was present on the completedConnection
+    // The handle that was present on the completedConnection (p2).
     if (movedHandle) {
       const { id, positionChange } = movedHandle;
       actions.push({

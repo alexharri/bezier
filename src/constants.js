@@ -10,6 +10,7 @@ module.exports = {
     POINT: "__POINT",
     CONN: "__CONNECTION",
     HANDLE: "__HANDLE",
+    LINE: "__LINE",
   },
 
   tools: {

@@ -3,7 +3,7 @@ const move = require("./common/move");
 
 // Point actions
 const addPoint = require("./point/addPoint");
-const addPointComplex = require("./point/addPointComplex");
+const addPenPoint = require("./point/addPenPoint");
 
 // Connection actions
 const addConnection = require("./connection/addConnection");
@@ -27,7 +27,7 @@ module.exports = Object.freeze({
   // Point actions
   ADD_POINT: addPoint,
   DELETE_POINT: reverse(addPoint),
-  ADD_POINT_COMPLEX: addPointComplex,
+  ADD_PEN_POINT: addPenPoint,
 
   // Connection actions
   ADD_CONNECTION: addConnection,

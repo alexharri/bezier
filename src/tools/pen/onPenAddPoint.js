@@ -15,7 +15,6 @@ const { getPointById } = require("../../points/getPoints");
 const { types } = require("../../constants");
 
 const defaultOpts = {
-  handleMirrorId: "",
   strayConnection: null,
 }
 
@@ -24,20 +23,20 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
     throw new Error("Invalid position.");
   }
 
-  console.log("ONPENADDPOINT")
-
+  /**
+   * This data object will later be passed into the "ADD_PEN_POINT"
+   * action, which has a lot of optional functionality.
+   */
   const data = {};
 
   const pointId = shortid();
-
-  const point = {
+  data.point = {
     id: pointId,
     x: position.x,
     y: position.y,
   };
 
-  store.dispatch({ type: "ADD_POINT", payload: point });
-  data.point = point;
+  store.dispatch({ type: "ADD_POINT", payload: data.point });
 
   clearSelection();
   addToSelection(types.POINT, pointId);
@@ -48,7 +47,6 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
 
   const handleId = shortid();
   const connectionId = shortid();
-
 
   let originalMovedHandle;
   let strayConnectionPoints;
@@ -85,10 +83,9 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
       y: newPoints[2].y,
     };
 
-    console.log(data);
     data.completedConnection = {
       id: strayConnection.id,
-      points:   [strayConnection.points[0],   point.id],
+      points:   [strayConnection.points[0],   data.point.id],
       handles:  [strayConnection.handles[0],  data.newCompletedConnectionHandle.id],
     };
 
@@ -219,7 +216,7 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
     }
 
     const action = {
-      type: "ADD_POINT_COMPLEX",
+      type: "ADD_PEN_POINT",
       data,
     };
 

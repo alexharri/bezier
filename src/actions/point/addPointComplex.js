@@ -6,9 +6,12 @@ module.exports = function addPointComplex(data) {
     newHandle,
     newConnection,
     movedHandle,
+    strayConnection,
     completedConnection,
     newCompletedConnectionHandle, // Don't judge me.
   } = data;
+
+  console.log(data);
 
   const actions = [
     {
@@ -43,7 +46,10 @@ module.exports = function addPointComplex(data) {
   if (completedConnection) {
     actions.push({
       type: "REPLACE_CONNECTION_POINT_IDS",
-      data: completedConnection,
+      data: {
+        oldConnection: strayConnection,
+        newConnection: completedConnection,
+      }
     });
 
     // The handle that was present on the completedConnection
@@ -51,8 +57,10 @@ module.exports = function addPointComplex(data) {
       const { id, positionChange } = movedHandle;
       actions.push({
         type: "MOVE",
-        selection: {
-          [types.HANDLE]: [id],
+        data: {
+          selection: {
+            [types.HANDLE]: [id],
+          },
           positionChange,
         },
       });

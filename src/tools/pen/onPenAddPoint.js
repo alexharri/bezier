@@ -10,6 +10,8 @@ const { setCursor, releaseOverride } = require("../../utils/cursor");
 const getPosDifference = require("../../utils/getPosDifference");
 const store = require("../../store");
 const mirrorPosition = require("../../utils/mirrorPosition");
+const quadraticToCubicBezier = require("../../bezier/quadraticToCubicBezier");
+const { getPointById } = require("../../points/getPoints");
 const { types } = require("../../constants");
 
 const defaultOpts = {
@@ -21,6 +23,8 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
   if (!isValidPosition(position)) {
     throw new Error("Invalid position.");
   }
+
+  console.log("ONPENADDPOINT")
 
   const data = {};
 
@@ -56,12 +60,13 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
    */
   if (opts.strayConnection) {
     const { strayConnection } = opts;
+    data.strayConnection = strayConnection;
 
     const newPoints = quadraticToCubicBezier(
       getPointById(strayConnection.points[0]),
       getHandleById(strayConnection.handles[0]),
       null,
-      initialPosition);
+      position);
 
     strayConnectionPoints = newPoints;
 
@@ -80,6 +85,7 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
       y: newPoints[2].y,
     };
 
+    console.log(data);
     data.completedConnection = {
       id: strayConnection.id,
       points:   [strayConnection.points[0],   point.id],
@@ -87,13 +93,14 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
     };
 
     store.dispatch({ type: "ADD_HANDLES", payload: [data.newCompletedConnectionHandle] });
-    store.dispatch({ type: "REPLACE_CONNECTION_POINT_IDS", payload: completedConnection });
+    store.dispatch({ type: "REPLACE_CONNECTION_POINT_IDS", payload: data.completedConnection });
 
     // Now we need to move the "movedHandle"
     originalMovedHandle = getHandleById(strayConnection.handles[0]);
+    const positionChange = getPosDifference(originalMovedHandle, newPoints[1]);
     data.movedHandle = {
       id: strayConnection.handles[0],
-      positionChange: getPosDifference(originalMovedHandle, newPoints[1]),
+      positionChange,
     };
 
     store.dispatch({
@@ -138,7 +145,7 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
          */
 
         // Moving p1 (movedHandle)
-        data.movedHandle.positionChange = getPosDifference(originalMovedHandle, currentPosition);
+        data.movedHandle.positionChange = getPosDifference(strayConnectionPoints[1], originalMovedHandle);
         store.dispatch({
           type: "MOVE",
           payload: {
@@ -181,18 +188,22 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
         },
       });
 
-      if (opts.handleMirrorId) {
-        const handlePos = getHandleById(handleMirrorId)
+      if (opts.strayConnection) {
+        const handlePos = data.newCompletedConnectionHandle;
+        const handleMirrorId = data.newCompletedConnectionHandle.id;
+        const newPosition = mirrorPosition(currentPosition, position);
         store.dispatch({
-        type: "MOVE",
-        payload: {
-          selection: {
-            [types.HANDLE]: [handleMirrorId],
+          type: "MOVE",
+          payload: {
+            selection: {
+              [types.HANDLE]: [handleMirrorId],
+            },
+            // lol
+            positionChange: getPosDifference(handlePos, newPosition),
           },
-          // lol
-          positionChange: getPosDifference(handlePos, mirrorPosition(currentPosition, position)),
-        },
-      });
+        });
+        data.newCompletedConnectionHandle.x = newPosition.x;
+        data.newCompletedConnectionHandle.y = newPosition.y;
       }
     }
     
@@ -208,21 +219,9 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
     }
 
     const action = {
-      type: "ADD_POINT",
-      data: {
-        id: pointId,
-        x: position.x,
-        y: position.y,
-      },
+      type: "ADD_POINT_COMPLEX",
+      data,
     };
-
-    if (mouseMoved) {
-      action.data.handle = {
-        x: lastPosition.x,
-        y: lastPosition.y,
-        id: handleId,
-      };
-    }
 
     addActionToHistory(action, false)
   }, true);

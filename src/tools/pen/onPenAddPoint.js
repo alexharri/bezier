@@ -16,7 +16,8 @@ const { types } = require("../../constants");
 
 const defaultOpts = {
   strayConnection: null,
-}
+  selectedPoint: null,
+};
 
 module.exports = function onPenAddPoint(position, opts = defaultOpts) {
   if (!isValidPosition(position)) {
@@ -220,6 +221,10 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
       data,
     };
 
-    addActionToHistory(action, false)
+    addActionToHistory(action, false, {
+      undoSelection: {
+        [types.POINT]: [opts.selectedPoint],
+      }
+    });
   }, true);
 }

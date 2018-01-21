@@ -13,6 +13,13 @@ module.exports = {
     LINE: "__LINE",
   },
 
+  // Map between types and reducers
+  typeReducers: {
+    "__POINT": "points",
+    "__CONNECTION": "connections",
+    "__HANDLE": "handles",
+  },
+
   tools: {
     /**
      * lowercase letters will be included with the string keys

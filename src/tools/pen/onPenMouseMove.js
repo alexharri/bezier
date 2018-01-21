@@ -61,10 +61,12 @@ module.exports = function onPenMouseMove(position, obj) {
          * There is a single connection selected with no stray connections,
          * so we should show a guide line between them.
          */
-        addGuide(types.LINE, {
-          from: selectedPoints[0],
-          to: position,
-        });
+        if (getPointById(selectedPoints[0])) {
+          addGuide(types.LINE, {
+            from: getPointById(selectedPoints[0]),
+            to: position,
+          });
+        }
       }
       // Show guide curve between points
     }

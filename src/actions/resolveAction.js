@@ -15,6 +15,7 @@
 
 const store = require("../store");
 const actions = require("./actions");
+const { isValidSelection, clearSelection } = require("../selection");
 
 /**
  * Fetches the appropriate action creator for the type provided.
@@ -85,19 +86,43 @@ module.exports = function resolveAction(action, opts = {}) {
   const { type, data, selection } = action;
   const undo = opts.undo || false;
 
-  if (!opts.ignoreSelection) {
-    store.dispatch({
-      type: "RESTORE_SELECTION",
-      payload: selection,
-    });
-  }
-
   const actionCreator = resolveActionCreator(type, undo);
   const result = actionCreator(data);
-
+  
   if (Array.isArray(result)) {
     resolveNestedAction(result, undo);
   } else {
     store.dispatch(result);
+  }
+
+  if (!opts.ignoreSelection) {
+    if (undo) {
+      /**
+       * On object creation, those objects will be selected.
+       *
+       * If we're undoing an object creation, then the selection will
+       * contain objects that don't exist.
+       *
+       * If this is the case, we restore the selection of the action before
+       * if it exists, otherwise we clear the selection.
+       */
+      if (!isValidSelection(selection)) {
+        const { history } = store.getState().history;
+        if (!history.length) {
+          clearSelection();
+        } else {
+          const actionBefore = history[history.length - 1];
+          store.dispatch({
+            type: "RESTORE_SELECTION",
+            payload: actionBefore.selection,
+          });
+        }
+      }
+    } else {
+      store.dispatch({
+        type: "RESTORE_SELECTION",
+        payload: selection,
+      });
+    }
   }
 }

@@ -1,3 +1,4 @@
+const { typeReducers } = require("./constants");
 const store = require("./store");
 
 const _validatedTypes = []; // To avoid unnecessary getState calls
@@ -71,11 +72,23 @@ exports.copySelection = function copySelection() {
 }
 
 /**
- * ONLY TO BE USED BY THE HISTORY MODULE
+ * Checks whether all objects in the selection exist.
+ *
+ * This is useful when undo-ing object creation.
  */
-exports._pasteSelection = function pasteSelection(selection) {
-  store.dispatch({
-    type: "RESTORE_SELECTION",
-    payload: selection,
-  });
+exports.isValidSelection = function isValidSelection(selection) {
+  let isValid = true;
+
+  const keys = Object.keys(selection);
+  for (let i = 0; isValid && i < keys.length; i += 1) {
+    const objectsOfType = store.getState()[typeReducers[keys[i]]];
+
+    selection[keys[i]].forEach((id) => {
+      if (!objectsOfType[id]) {
+        isValid = false;
+      }
+    });
+  }
+
+  return isValid;
 }

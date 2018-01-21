@@ -9,8 +9,8 @@ module.exports = function undo() {
   }
 
   const action = history[history.length - 1];
-  resolveAction(action, { undo: true });
-  
   store.dispatch({ type: "UNDO" });
+
+  resolveAction(action, { undo: true });
   render(null, { useLastPosition: true });
 }

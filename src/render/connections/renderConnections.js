@@ -37,10 +37,17 @@ module.exports = function renderConnections() {
   getGuidesOfType(types.CONN).forEach((guide) => {
     drawPath(guide, 1, colors.PRIMARY);
   });
-  
+
   getGuidesOfType(types.LINE).forEach((line) => {
     const ctx = getContext();
+
+    console.log(line);
     
-    drawPath(guide, 1, colors.PRIMARY);
+    ctx.beginPath();
+    ctx.moveTo(line.from.x, line.from.y);
+    ctx.lineTo(line.to.x, line.to.y);
+    ctx.strokeStyle = colors.PRIMARY;
+    ctx.lineWidth = 1;
+    ctx.stroke();
   });
 }

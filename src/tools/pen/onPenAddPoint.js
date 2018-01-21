@@ -187,14 +187,36 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
         data.newCompletedConnectionHandle.x = currentPosition.x;
         data.newCompletedConnectionHandle.y = currentPosition.y;
       } else if (data.lineConnection) {
-        data.lineConnectionHandle = {
+        data.lineConnectionRightHandle = {
           id: shortid(),
           x: currentPosition.x,
           y: currentPosition.y,
         };
-        data.lineConnection.handles = [null, data.lineConnectionHandle.id];
-        store.dispatch({ type: "ADD_HANDLES", payload: [data.lineConnectionHandle] });
-        console.log(data.lineConnection)
+
+        const leftHandle = quadraticToCubicBezier(
+          getPointById(opts.selectedPoint),
+          null,
+          data.lineConnectionRightHandle,
+          position)[1];
+
+        data.lineConnectionLeftHandle = {
+          id: shortid(),
+          x: leftHandle.x,
+          y: leftHandle.y,
+        };
+
+        data.lineConnection.handles = [
+          data.lineConnectionLeftHandle.id,
+          data.lineConnectionRightHandle.id,
+        ];
+
+        store.dispatch({
+          type: "ADD_HANDLES",
+          payload: [
+            data.lineConnectionLeftHandle,
+            data.lineConnectionRightHandle,
+          ],
+        });
         store.dispatch({ type: "REPLACE_CONNECTION_POINT_IDS", payload: data.lineConnection })
       }
     } else {
@@ -212,13 +234,9 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
         },
       });
 
-      if (opts.strayConnection || data.lineConnectionHandle) {
-        const which = (opts.strayConnection
-          ? "newCompletedConnectionHandle"
-          : "lineConnectionHandle");
-
-        const handlePos = data[which];
-        const handleMirrorId = data[which].id;
+      if (opts.strayConnection) {
+        const handlePos = data.newCompletedConnectionHandle;
+        const handleMirrorId = data.newCompletedConnectionHandle.id;
         const newPosition = mirrorPosition(currentPosition, position);
         store.dispatch({
           type: "MOVE",
@@ -226,12 +244,44 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
             selection: {
               [types.HANDLE]: [handleMirrorId],
             },
-            // lol
             positionChange: getPosDifference(handlePos, newPosition),
           },
         });
-        data[which].x = newPosition.x;
-        data[which].y = newPosition.y;
+        data.newCompletedConnectionHandle.x = newPosition.x;
+        data.newCompletedConnectionHandle.y = newPosition.y;
+      } else if (data.lineConnection) {
+        const [p0, p1, p2, p3] = quadraticToCubicBezier(
+          getPointById(opts.selectedPoint),
+          null,
+          mirrorPosition(currentPosition, position),
+          position);
+
+        // Right handle
+        store.dispatch({
+          type: "MOVE",
+          payload: {
+            selection: {
+              [types.HANDLE]: [data.lineConnectionRightHandle.id],
+            },
+            positionChange: getPosDifference(data.lineConnectionRightHandle, p1),
+          },
+        });
+        data.lineConnectionRightHandle.x = p1.x;
+        data.lineConnectionRightHandle.y = p1.y;
+
+        // Left handle
+        store.dispatch({
+          type: "MOVE",
+          payload: {
+            selection: {
+              [types.HANDLE]: [data.lineConnectionLeftHandle.id],
+            },
+            positionChange: getPosDifference(data.lineConnectionLeftHandle, p2),
+          },
+        });
+
+        data.lineConnectionLeftHandle.x = p2.x;
+        data.lineConnectionLeftHandle.y = p2.y;
       }
     }
     

@@ -12,7 +12,7 @@ module.exports = ({ connection, newPoints, ids }) => {
    *
    * The other points (p1, p2, p4, p5) are the handles.
    */
-  const [ p0, p1, p2, p3, p4, p5, p6 ] = newPoints; // From the splitBezier function
+  const [ p0, p1, p2, p3, p4, p5, p6 ] = newPoints; // From the splitCubicBezier function
 
   // We remove the old connection
   actions.push({

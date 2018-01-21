@@ -1,4 +1,6 @@
 const getConnectionPoints = require("./getConnectionPoints");
+const getIntermediateNumber = require("../utils/getIntermediateNumber");
+
 
 /**
  * Takes in a connection and a t value and returns the point
@@ -6,6 +8,12 @@ const getConnectionPoints = require("./getConnectionPoints");
  */
 module.exports = function calcBezierPointAt(connection, t) {
   const [ p0, p1, p2, p3 ] = getConnectionPoints(connection);
+  if (!p1 && !p2) {
+    const x = getIntermediateNumber(p0.x, p3.x, t);
+    const y = getIntermediateNumber(p0.y, p3.y, t);
+    return { x, y };
+  }
+
   const u = 1 - t;
 
   function calcPart(which) {

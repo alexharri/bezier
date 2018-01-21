@@ -5,7 +5,7 @@ const { isKeyDown } = require("../../utils/keyboard");
 const getStrayConnection = require("../../connections/getStrayConnection");
 const { getSelectedOfType } = require("../../selection");
 const { setCursor, releaseOverride } = require("../../utils/cursor");
-const splitBezier = require("../../bezier/splitBezier");
+const splitCubicBezier = require("../../bezier/splitCubicBezier");
 const getConnectionPoints = require("../../connections/getConnectionPoints");
 const addActionToHistory = require("../../actions/history/addActionToHistory");
 const onMoveMouseDown = require("../move/onMoveMouseDown");
@@ -61,7 +61,7 @@ module.exports = function onPenMouseDown(initialPosition, obj) {
     const { connection, closestPoint } = value;
     const { t } = closestPoint; // t is where we split the path
   
-    const newPoints = splitBezier(getConnectionPoints(connection), t);
+    const newPoints = splitCubicBezier(getConnectionPoints(connection), t);
   
     for (let i = 0; i < newPoints.length; i += 1) {
       newPoints[i].id = shortid();

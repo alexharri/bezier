@@ -1,8 +1,8 @@
 /**
  * For a nice geometric visualization of the math, check below.
- * http://www.iscriptdesign.com/?sketch=tutorial/splitbezier
+ * http://www.iscriptdesign.com/?sketch=tutorial/splitCubicBezier
  */
-module.exports = function splitBezier(points, t) {
+module.exports = function splitCubicBezier(points, t) {
   const [ p1 ,p2, p3, p4 ] = points;
 
   const x1 = p1.x;

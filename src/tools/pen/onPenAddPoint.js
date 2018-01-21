@@ -110,6 +110,22 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
         positionChange,
       },
     });
+  } else if (opts.selectedPoint) {
+    /**
+     * This means that there's not a stray connection, but a single
+     * point is selected.
+     *
+     * This means that we're creating a new connection with no p0 handle.
+     */
+
+    // The connection between the selectedPoint and the new
+    data.lineConnection = {
+      id: shortid(),
+      points: [opts.selectedPoint, pointId],
+      handles: [null, null],
+    }
+
+    store.dispatch({ type: "ADD_CONNECTION", payload: data.lineConnection });
   }
 
   /**
@@ -170,6 +186,16 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
         });
         data.newCompletedConnectionHandle.x = currentPosition.x;
         data.newCompletedConnectionHandle.y = currentPosition.y;
+      } else if (data.lineConnection) {
+        data.lineConnectionHandle = {
+          id: shortid(),
+          x: currentPosition.x,
+          y: currentPosition.y,
+        };
+        data.lineConnection.handles = [null, data.lineConnectionHandle.id];
+        store.dispatch({ type: "ADD_HANDLES", payload: [data.lineConnectionHandle] });
+        console.log(data.lineConnection)
+        store.dispatch({ type: "REPLACE_CONNECTION_POINT_IDS", payload: data.lineConnection })
       }
     } else {
       /**
@@ -186,9 +212,13 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
         },
       });
 
-      if (opts.strayConnection) {
-        const handlePos = data.newCompletedConnectionHandle;
-        const handleMirrorId = data.newCompletedConnectionHandle.id;
+      if (opts.strayConnection || data.lineConnectionHandle) {
+        const which = (opts.strayConnection
+          ? "newCompletedConnectionHandle"
+          : "lineConnectionHandle");
+
+        const handlePos = data[which];
+        const handleMirrorId = data[which].id;
         const newPosition = mirrorPosition(currentPosition, position);
         store.dispatch({
           type: "MOVE",
@@ -200,8 +230,8 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
             positionChange: getPosDifference(handlePos, newPosition),
           },
         });
-        data.newCompletedConnectionHandle.x = newPosition.x;
-        data.newCompletedConnectionHandle.y = newPosition.y;
+        data[which].x = newPosition.x;
+        data[which].y = newPosition.y;
       }
     }
     

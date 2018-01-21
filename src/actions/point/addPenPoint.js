@@ -16,6 +16,8 @@ module.exports = function addPenPoint(data) {
     strayConnection,
     completedConnection,
     newCompletedConnectionHandle, // Don't judge me.
+    lineConnection,
+    lineConnectionHandles,
   } = data;
 
   const actions = [
@@ -40,6 +42,28 @@ module.exports = function addPenPoint(data) {
       type: "ADD_HANDLES",
       data: [newHandle],
     });
+  }
+
+  /**
+   * This is the connection created if there was no stray connection
+   * on the selected point when the new point was created.
+   *
+   * This connection will not have a p2 handle, but will have a p3 handle
+   * if the mouse was moved.
+   */
+  if (lineConnection) {
+    actions.push({
+      type: "ADD_CONNECTION",
+      data: lineConnection,
+    });
+
+    // The p3 handle if the mouse was moved.
+    if (lineConnectionHandles) {
+      actions.push({
+        type: "ADD_HANDLES",
+        data: [lineConnectionHandles],
+      });
+    }
   }
 
   /**
@@ -71,7 +95,7 @@ module.exports = function addPenPoint(data) {
       });
     }
 
-    // The new handle for the completed connection (p2).
+    // The new handle for the completed connection (p3).
     if (!newCompletedConnectionHandle) {
       actions.push({
         type: "ADD_HANDLES",

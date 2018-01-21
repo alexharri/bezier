@@ -3,7 +3,7 @@ const defaultState = {
   future: [],
 };
 
-const maxLen = 5;
+const maxLen = 50;
 
 module.exports = function reducer(state = defaultState, action) {
   switch (action.type) {

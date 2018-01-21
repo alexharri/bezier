@@ -39,34 +39,10 @@ module.exports = function onPenMouseDown(initialPosition, obj) {
         onPenAddPoint(initialPosition, {
           strayConnection,
         });
-        /**
-         * There is a stray connection, and we're connecting it to
-         * the click position.
-         *
-         * No listeners needed here, the connection is completed instantly.
-         */
-        /*
-        const newPoints = quadraticToCubicBezier(
-          getPointById(strayConnection.points[0]),
-          getHandleById(strayConnection.handles[0]),
-          null,
-          initialPosition);
-        const pointIds = newPoints.map(() => shortid());
-
-        clearSelection();
-        addToSelection(types.POINT, pointIds[3]); // The new point
-        addActionToHistory({
-          type: "COMPLETE_STRAY_CONNECTION",
-          data: {
-            connection: strayConnection,
-            handleId: strayConnection.handles[0],
-            newPoints,
-            pointIds,
-          },
-        }, true);
-        */
       } else {
-        console.log("STRAIGHT LINE");
+        onPenAddPoint(initialPosition, {
+          selectedPoint: selectedPoints[0],
+        });
       }
     } else {
       // No or multiple points selected, so we create an unconnected point

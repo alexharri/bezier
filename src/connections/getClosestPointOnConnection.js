@@ -14,7 +14,7 @@ const numApproxPoints = 40;
  * Else it returns an point.
  */
 module.exports = function getClosestPointOnConnection(c, position) {
-  if (c.points.indexOf(null) !== -1) {
+  if (c.points.indexOf(null) !== -1 || c.handles.indexOf(null) !== -1) {
     return null;
   }
   

@@ -56,3 +56,66 @@ exports.renderLine = function renderLine(from, to, color = "#aaa", width = 1) {
   ctx.lineWidth = width;
   ctx.stroke();
 }
+
+exports.renderCubicBezier = function renderCubicBezier(points, lineWidth = 1, color = "#444") {
+  if (!Array.isArray(points)) {
+    throw new Error(`Invalid points. Expected array but got ${points}.`);
+  }
+
+  if (points.length !== 4) {
+    throw new Error(`Invalid points. Expected 4 but got ${points.length}.`);
+  }
+
+  points.forEach((point, i) => {
+    if (!isValidPosition(point)) {
+      throw new Error(`Invalid position at index ${i}`);
+    }
+  });
+
+  const [ p0, p1, p2, p3 ] = points;
+  const ctx = getContext();
+
+  ctx.beginPath();
+  ctx.moveTo(p0.x, p0.y);
+  ctx.bezierCurveTo(
+    (p1.x), (p1.y),
+    (p2.x), (p2.y),
+    (p3.x), (p3.y),
+  );
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.stroke();
+}
+
+exports.renderQuadraticBezier = function renderQuadraticBezier(
+  points,
+  lineWidth = 1,
+  color = "#444",
+) {
+  if (!Array.isArray(points)) {
+    throw new Error(`Invalid points. Expected array but got ${points}.`);
+  }
+
+  if (points.length !== 3) {
+    throw new Error(`Invalid points. Expected 3 but got ${points.length}.`);
+  }
+
+  points.forEach((point, i) => {
+    if (!isValidPosition(point)) {
+      throw new Error(`Invalid position at index ${i}`);
+    }
+  });
+
+  const [ p0, p1, p2 ] = points;
+  const ctx = getContext();
+
+  ctx.beginPath();
+  ctx.moveTo(p0.x, p0.y);
+  ctx.quadraticCurveTo(
+    (p1.x), (p1.y),
+    (p2.x), (p2.y),
+  );
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.stroke();
+}

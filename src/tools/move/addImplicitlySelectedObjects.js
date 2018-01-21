@@ -29,7 +29,7 @@ module.exports = function addImplicitlySelectedObjects(selection) {
    */
   function addImplicitlySelected(type, id) {
     if (type === types.POINT) {
-      const handleIds = getPointHandleIds(id);
+      const handleIds = getPointHandleIds(id).filter(x => x);
       addArrayToSelection(types.HANDLE, handleIds);
     } else if (type === types.CONN) {
       const pointIds = getConnectionById(id).points;

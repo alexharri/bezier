@@ -33,6 +33,9 @@ exports.setCursor = function setCursor(cursor, opts = {}) {
   }
 
   if (override && opts.overrideId !== override) {
+    if (opts.override) {
+      throw new Error("Attempted to double override.");
+    }
     return false;
   }
 

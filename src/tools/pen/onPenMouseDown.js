@@ -17,6 +17,7 @@ const { getHandleById } = require("../../handles/getHandles");
 const getPosDifference = require("../../utils/getPosDifference");
 const { addToSelection, clearSelection, isSelected } = require("../../selection");
 
+const onPenConnectPoints = require("./onPenConnectPoints");
 const onPenAddPoint = require("./onPenAddPoint");
 
 module.exports = function onPenMouseDown(initialPosition, obj) {
@@ -124,6 +125,13 @@ module.exports = function onPenMouseDown(initialPosition, obj) {
    * This is where things get fun.
    */
   if (type === types.POINT) {
+    const selectedPoints = getSelectedOfType(types.POINT);
+
+    if (selectedPoints.length === 1 && (selectedPoints[0] !== value.id)) {
+      onPenConnectPoints(selectedPoints[0], value.id);
+      return;
+    }
+
     // We clear the selection if shift is not being held
     if (!isKeyDown(keys.SHIFT)) {
       clearSelection();
@@ -137,7 +145,6 @@ module.exports = function onPenMouseDown(initialPosition, obj) {
     let cursorOverrideId;
     let lastPosition = initialPosition;
 
-    const selectedPoints = getSelectedOfType(types.POINT);
     let strayConnection = selectedPoints.length === 1
       ? getStrayConnection(selectedPoints[0])
       : null;

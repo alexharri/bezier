@@ -9,6 +9,7 @@ const addPenPoint = require("./point/addPenPoint");
 const addConnection = require("./connection/addConnection");
 const splitConnection = require("./connection/splitConnection");
 const splitLineConnection = require("./connection/splitLineConnection");
+const connectPoints = require("./connection/connectPoints");
 const addStrayConnection = require("./connection/addStrayConnection");
 const completeStrayConnection = require("./connection/completeStrayConnection");
 const replaceConnectionPointIds = require("./connection/replaceConnectionPointIds");
@@ -35,6 +36,7 @@ module.exports = Object.freeze({
   DELETE_CONNECTION: reverse(addConnection),
   SPLIT_CONNECTION: splitConnection,
   SPLIT_LINE_CONNECTION: splitLineConnection,
+  CONNECT_POINTS: connectPoints,
   ADD_STRAY_CONNECTION: addStrayConnection,
   COMPLETE_STRAY_CONNECTION: completeStrayConnection,
   REPLACE_CONNECTION_POINT_IDS: replaceConnectionPointIds,

@@ -234,6 +234,9 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
         },
       });
 
+      data.newHandle.x = currentPosition.x;
+      data.newHandle.y = currentPosition.y;
+
       if (opts.strayConnection) {
         const handlePos = data.newCompletedConnectionHandle;
         const handleMirrorId = data.newCompletedConnectionHandle.id;
@@ -291,7 +294,7 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
   addListener("mouseup", () => {
     removeListener("mousemove", listenerId);
 
-    if (typeof cursorOverrideId === "string") {
+    if (cursorOverrideId) {
       releaseOverride(cursorOverrideId);
       setCursor("DEFAULT");
     }
@@ -301,10 +304,6 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
       data,
     };
 
-    addActionToHistory(action, false, {
-      undoSelection: {
-        [types.POINT]: [opts.selectedPoint],
-      }
-    });
+    addActionToHistory(action, false);
   }, true);
 }

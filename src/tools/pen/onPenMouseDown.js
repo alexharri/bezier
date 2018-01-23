@@ -60,30 +60,57 @@ module.exports = function onPenMouseDown(initialPosition, obj) {
   if (type === types.CONN) {
     const { connection, closestPoint } = value;
     const { t } = closestPoint; // t is where we split the path
-  
-    const newPoints = splitCubicBezier(getConnectionPoints(connection), t);
-  
-    for (let i = 0; i < newPoints.length; i += 1) {
-      newPoints[i].id = shortid();
+
+    const currentPoints = getConnectionPoints(connection);
+
+    if (!currentPoints[1] && !currentPoints[2]) {
+      /**
+       * No handles, so we're splitting a straight line.
+       */
+      const newPointId = shortid();
+
+      clearSelection();
+      addToSelection(types.POINT, newPointId);
+
+      addActionToHistory({
+        type: "SPLIT_LINE_CONNECTION",
+        data: {
+          ids: [shortid(), shortid()],
+          connection,
+          newPoint: {
+            ...closestPoint,
+            id: newPointId,
+          },
+        },
+      }, true);
+    } else {
+      /**
+       * Splitting a cubic bezier
+       */
+      const newPoints = splitCubicBezier(currentPoints, t);
+
+      for (let i = 0; i < newPoints.length; i += 1) {
+        newPoints[i].id = shortid();
+      }
+
+      // p2 and p4 will be siblings
+      newPoints[2].sibling = newPoints[4].id;
+      newPoints[4].sibling = newPoints[2].id;
+
+      // Selecting the new point
+      clearSelection();
+      addToSelection(types.POINT, newPoints[3].id);
+
+      addActionToHistory({
+        type: "SPLIT_CONNECTION",
+        data: {
+          ids: [shortid(), shortid()], 
+          connection,
+          newPoints
+        },
+      }, true);
+      setCursor("DEFAULT"); // There will be a point below the mouse
     }
-  
-    // p2 and p4 will be siblings
-    newPoints[2].sibling = newPoints[4].id;
-    newPoints[4].sibling = newPoints[2].id;
-
-    // Selecting the new point
-    clearSelection();
-    addToSelection(types.POINT, newPoints[3].id);
-
-    addActionToHistory({
-      type: "SPLIT_CONNECTION",
-      data: {
-        ids: [shortid(), shortid()], 
-        connection,
-        newPoints
-      },
-    }, true);
-    setCursor("DEFAULT"); // There will be a point below the mouse
   }
 
   /**

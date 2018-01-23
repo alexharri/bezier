@@ -132,6 +132,15 @@ module.exports = function onPenAddPoint(position, opts = defaultOpts) {
    * Now here comes all the bullshit
    */
   const listenerId = addListener("mousemove", (currentPosition) => {
+    if (
+      !mouseMoved &&
+      Math.hypot(
+        lastPosition.x - currentPosition.x,
+        lastPosition.y - currentPosition.y) < 10
+    ) {
+      return;
+    }
+
     if (!mouseMoved) {
       mouseMoved = true;
       cursorOverrideId = setCursor("PEN", { override: true });

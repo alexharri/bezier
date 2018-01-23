@@ -35,13 +35,21 @@ module.exports = function onPenConnectPoints(selectedPointId, clickedPointId) {
 
   let mouseMoved = false;
   let cursorOverrideId;
-  let lastPosition;
+  let lastPosition = { ...getPointById(clickedPointId) };
 
   const listenerId = addListener("mousemove", (position) => {
+    if (
+      !mouseMoved &&
+      Math.hypot(
+        lastPosition.x - position.x,
+        lastPosition.y - position.y) < 10
+    ) {
+      return;
+    }
+
     if (!mouseMoved) {
       mouseMoved = true;
       cursorOverrideId = setCursor("PEN", { override: true });
-      lastPosition = position;
 
       const strayConnectionHandleId = shortid();
 
@@ -130,6 +138,7 @@ module.exports = function onPenConnectPoints(selectedPointId, clickedPointId) {
       data.strayConnectionHandle.x = position.x;
       data.strayConnectionHandle.y = position.y;
     }
+    lastPosition = position;
   });
 
   addListener("mouseup", () => {

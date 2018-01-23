@@ -18,8 +18,6 @@ module.exports = function connectPoints({
     });
   }
 
-  console.log(strayConnection);
-
   if (strayConnection) {
     actions.push({
       type: "ADD_CONNECTION",

@@ -7,10 +7,6 @@ const { renderLine, renderCubicBezier, renderQuadraticBezier } = require("../pri
 const { types, colors } = require("../../constants");
 
 
-function drawQuadradicPath() {
-
-}
-
 module.exports = function renderConnections() {
   const connections = getAllConnections();
   for (let i = 0; i < connections.length; i += 1) {
@@ -20,7 +16,7 @@ module.exports = function renderConnections() {
     } else if (points[0] && points[3]) { // Not a stray connection
       // Straight line
       if (!points[1] && !points[2]) {
-        renderLine(points[0], points[3], "red", 1);
+        renderLine(points[0], points[3]);
       } else { // 3 points exist
         renderQuadraticBezier(points.filter(p => p)); // Will have 3 points
       }

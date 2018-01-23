@@ -66,17 +66,33 @@ module.exports = function onPenMouseMove(position, obj) {
           to: position,
         });
       }
-      // Show guide curve between points
+      setCursor("PEN_ADD_POINT");
     }
     return;
   }
 
   const { value, type } = obj;
 
-  setPenCursor(type);
-
   if (type === types.CONN) {
     const { closestPoint } = value;
+    setCursor("PEN_ADD_POINT");
     addGuide(types.POINT, value.closestPoint);
+  } else if (type === types.POINT) {
+    const selectedPoints = getSelectedOfType(types.POINT);
+    if (selectedPoints.length === 1) {
+      if (selectedPoints[0] !== value.id) { // Connecting two points
+        setCursor("PEN_SELECT_POINT");
+        addGuide(types.LINE, {
+          from: getPointById(selectedPoints[0]),
+          to: value,
+        });
+      } else { // Hovering over selected point
+        setCursor("PEN_SELECT_POINT");
+      }
+    } else {
+      setCursor("PEN_ADD_POINT");
+    }
+  } else if (type === types.HANDLE) {
+    setCursor("DEFAULT");
   }
 }

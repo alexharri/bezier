@@ -30,7 +30,7 @@ exports.renderCircle = function renderCircle(points, radius, color, stroke) {
   }
 }
 
-exports.renderLine = function renderLine(from, to, color = "#aaa", width = 1) {
+exports.renderLine = function renderLine(from, to, color = "#444", width = 1) {
   const ctx = getContext();
 
   if (!isValidPosition(from)) {

@@ -1,5 +1,5 @@
-const mainContainer = document.getElementById("main-container");
-const getMainRect = () => mainContainer.getBoundingClientRect();
+const canvas = document.getElementById("canvas");
+const getCanvasRect = () => canvas.getBoundingClientRect();
 
-exports.getLeftOffset = () => getMainRect().left;
-exports.getTopOffset  = () => getMainRect().top;
+exports.getLeftOffset = () => getCanvasRect().left;
+exports.getTopOffset  = () => getCanvasRect().top;

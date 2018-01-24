@@ -1,13 +1,35 @@
 .main-container {
-  height: 800px;
+  height: 832px;
   width: 800px;
-  border: 1px solid red;
   position: relative;
+}
+
+header.toolbar {
+  display: block;
+  height: 32px;
+  display: flex;
+  border-bottom: 1px solid rgba(0,0,0,.2);
+}
+
+.tool {
+  height: 32px;
+  width: 32px;
+  background-color: rgba(0,0,0,.05);
+  border: none;
+  outline: none;
+  border: 1px solid white;
+  border-right: none;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+
+.tool.active {
+  background-color: #29aaf4;
 }
 
 #canvas {
   position: absolute;
-  top: 0;
+  top: 32px;
   right: 0;
   left: 0;
   bottom: 0;

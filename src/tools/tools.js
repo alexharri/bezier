@@ -34,6 +34,14 @@ exports.setTool = function setTool(key) {
     setCursor(currentTool);
     render(null, { useLastPosition: true });
   }
+
+  const elArr = document.querySelectorAll("[data-tool-key]");
+  for (let i = 0; i < elArr.length; i += 1) {
+    elArr[i].classList.remove("active");
+    if (elArr[i].getAttribute("data-tool-key") === key) {
+      elArr[i].classList.add("active");
+    }
+  }
 }
 
 exports.onToolMouseDown = function onToolMouseDown(e) {

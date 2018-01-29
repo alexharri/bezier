@@ -8,7 +8,7 @@ const cursorImageMap = {};
   const keys = Object.keys(cursors);
   for (let i = 0; i < keys.length; i += 1) {
     const image = new Image();
-    image.src = `/static/images/${cursors[keys[i]]}`;
+    image.src = `static/images/${cursors[keys[i]]}`;
     cursorImageMap[keys[i]] = image;
   }
 }
